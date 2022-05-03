@@ -17,11 +17,17 @@ public class PlayerMovement : MonoBehaviour
   ;
     int direction = 0;
     int[] directions = {0, 90, 180, 270};
+
+
+    Map map = new Map();
+    [SerializeField]
+    public GameObject Cub;
     private void Awake()
     {
+        map = new Map(100,Cub);
         _input = GetComponent<PlayerInput>();
     }
-
+    
     private void Move(Vector3 deplacement,int dir)
     {
         if (dir == direction)
