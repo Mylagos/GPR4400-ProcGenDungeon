@@ -20,6 +20,9 @@ public class Map : MonoBehaviour
     private Vector2Int size;
     [SerializeField]
     private int RedDisipation;
+    //force the amount of room wanted to be in the map
+    [SerializeField]
+    private bool IWantThoseRooms;
     void Awake()
     {
         for (int i = 0; i < size.x; i++)
@@ -118,14 +121,32 @@ public class Map : MonoBehaviour
     }
 
     //generate the map
-    void Generate()
+    Room RandomChild()
     {
-
-        //current is the current generation and child will be its childs
+        Room temp = map[size.x / 2][size.y / 2];
+        for (int i = 0;i< Random.Range(0, iterations / 2); i++)
+        {
+            try
+            {
+                temp = temp.enfants[Random.Range(0, temp.enfants.Count)];
+            }
+            catch { break; }
+            
+        }
+        return temp;
+    }
+    //generate the maps using the parameters given
+    void Generate(bool redo = false, int currentRooms = 0)
+    {
+        //set the current population and the childs
         List<Room> current = new List<Room>() { map[size.x / 2][size.x / 2 + 1], map[size.x / 2][size.x / 2 - 1], map[size.x / 2 - 1][size.x / 2], map[size.x / 2 + 1][size.x / 2] };
         List<Room> child = new List<Room>();
-        //keep track of the amount of room  added
-        int currentRooms = 0;
+        //we add a random child her to avoid max depth recursion when using the IWantThoseRooms function
+        if (redo)
+        {
+            current.Add(RandomChild());
+        }
+
         //loop for a certain depth and terminate if there is anought rooms
         for (int i = 0; i < iterations && currentRooms < rooms; i++)
         {
@@ -172,12 +193,19 @@ public class Map : MonoBehaviour
             //clone the child to be the next current and clear the child
             current = clone(child);
             child.Clear();
+          
             if (currentRooms == rooms)
             {
                 break;
             }
         }
+        //if IWantThoseRooms and the amount of rooms wanted is not check, we redo the process until it works
+        if (IWantThoseRooms && rooms > currentRooms)
+        {
+            Generate(true, currentRooms);
+        }
     }
+    //retourne un nombre par weighted random par la list chances
     int Percentage(List<int> chances)
     {
         List<int> ratio = new List<int>();
@@ -190,6 +218,7 @@ public class Map : MonoBehaviour
         }
         return ratio[Random.Range(0, ratio.Count)];
     }
+    //clones une list de Room
     List<Room> clone(List<Room> father)
     {
         List<Room> clo = new List<Room>();
@@ -200,6 +229,7 @@ public class Map : MonoBehaviour
         return clo;
 
     }
+    //check la disponibilité
     List<Vector2Int> availables(Vector2Int pos)
     {
         

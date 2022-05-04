@@ -220,13 +220,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9998b0a44008f43dba8ee5ed60855e9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rooms: 100
+  rooms: 200
   Cube: {fileID: 1710932081}
   MainChance: 19000000190000000c00000006000000
   rate: 0.1
   iterations: 100
   size: {x: 21, y: 21}
   RedDisipation: 50
+  IWantThoseRooms: 1
 --- !u!1 &1679245576
 GameObject:
   m_ObjectHideFlags: 0
