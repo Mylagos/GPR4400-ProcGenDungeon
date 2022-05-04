@@ -13,14 +13,14 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private Vector2Int ymax;
     [SerializeField]
-    private Vector2Int xmax
-  ;
+    private Vector2Int xmax;
     int direction = 0;
     int[] directions = {0, 90, 180, 270};
-   
+    bool OnDoor;
     private void Awake()
     {
         _input = GetComponent<PlayerInput>();
+      
     }
     
     private void Move(Vector3 deplacement,int dir)
@@ -33,8 +33,6 @@ public class PlayerMovement : MonoBehaviour
                 if(temp.y > ymax.x && temp.y < ymax.y && temp.x > xmax.x && temp.x < xmax.y){
                     point.transform.position += deplacement;
                 }
-                
-
             }
         }
         else
@@ -43,27 +41,44 @@ public class PlayerMovement : MonoBehaviour
             transform.eulerAngles = new Vector3(0, 0, directions[dir]);
             print(directions[dir]);
         }
-        
-       
     }
     private void Update()
     {
+
+        
+        List<Vector3> newpos = new List<Vector3>() { new Vector3(0, -4) , new Vector3(0, 4), new Vector3(-7, 0), new Vector3(7, 0) };
+        List<Vector2Int> newdir = new List<Vector2Int>() { new Vector2Int(0, 1), new Vector2Int(0, -1), new Vector2Int(1, 0), new Vector2Int(-1, 0) };
+        //Check if the player is on a door, it then set the bool ondoor true so it doesn't do it each frame, ondoor is flase when the player mooves
+        for (int i = 0; i < 4 && OnDoor==false; i++)
+        {
+            if (transform.position == Map.doors[i].transform.position && Map.doors[i].activeInHierarchy)
+            {
+                Map.move(newdir[i]);
+                transform.position = newpos[i];
+                point.transform.position = newpos[i];
+                OnDoor = true;
+            }
+        }
+       
         if (_input.actions["up"].triggered)
         {
-            print("jnasnd");
             Move(new Vector3(0, 1, 0),2);
+            OnDoor = false;
         }
         else if (_input.actions["down"].triggered)
         {
             Move(new Vector3(0, -1, 0),0);
+            OnDoor = false;
         }
         else if (_input.actions["left"].triggered)
         {
             Move(new Vector3(-1, 0, 0),3);
+            OnDoor = false;
         }
         else if (_input.actions["right"].triggered)
         {
             Move(new Vector3(1, 0, 0),1);
+            OnDoor = false;
         }
         transform.position = Vector2.MoveTowards(transform.position, point.transform.position, speed *Time.deltaTime);
        
