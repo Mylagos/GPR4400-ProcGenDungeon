@@ -18,19 +18,8 @@ public class PlayerMovement : MonoBehaviour
     int direction = 0;
     int[] directions = {0, 90, 180, 270};
    
-
-    Map map = new Map();
-    [SerializeField]
-    private GameObject Cub;
-    [SerializeField]
-    private List<int> Chances;
-    [SerializeField]
-    private float rate;
-    [SerializeField]
-    private int Rooms;
     private void Awake()
     {
-        map = new Map(Rooms, Cub,Chances,rate);
         _input = GetComponent<PlayerInput>();
     }
     

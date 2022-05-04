@@ -134,6 +134,7 @@ GameObject:
   - component: {fileID: 453896626}
   - component: {fileID: 453896625}
   - component: {fileID: 453896624}
+  - component: {fileID: 453896627}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -207,6 +208,25 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &453896627
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 453896623}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9998b0a44008f43dba8ee5ed60855e9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rooms: 100
+  Cube: {fileID: 1710932081}
+  MainChance: 19000000190000000c00000006000000
+  rate: 0.1
+  iterations: 100
+  size: {x: 21, y: 21}
+  RedDisipation: 50
 --- !u!1 &1679245576
 GameObject:
   m_ObjectHideFlags: 0
@@ -352,14 +372,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18afacf419bcc654da4aee3b93ab90ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  point: {fileID: 0}
+  point: {fileID: 1710932081}
   speed: 3
   ymax: {x: -4, y: 4}
   xmax: {x: -10, y: 10}
-  Cub: {fileID: 1710932081}
-  Chances: 190000001e0000000c00000006000000
-  rate: 0.3
-  Rooms: 20
 --- !u!212 &1700009585
 SpriteRenderer:
   m_ObjectHideFlags: 0

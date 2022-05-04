@@ -2,49 +2,50 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Map
+public class Map : MonoBehaviour
 {
     // Start is called before the first frame update
     List<List<Room>> map = new List<List<Room>>();
-    int rooms;
-    GameObject Cube;
-    List<int> MainChance = new List<int>();
-    float rate;
-    public Map()
+    [SerializeField]
+    private int rooms;
+    [SerializeField]
+    private GameObject Cube;
+    [SerializeField]
+    private List<int> MainChance = new List<int>();
+    [SerializeField]
+    private float rate;
+    [SerializeField]
+    private int iterations;
+    [SerializeField]
+    private Vector2Int size;
+    [SerializeField]
+    private int RedDisipation;
+    void Awake()
     {
-    }
-    public Map(int rooms, GameObject Cub,List<int> MainChance, float rate)
-    {
-        this.MainChance = MainChance;
-        this.rooms = rooms;
-        for (int i = 0; i < 11; i++)
+        for (int i = 0; i < size.x; i++)
         {
             map.Add(new List<Room>());
-            for (int k = 0; k < 11; k++)
+            for (int k = 0; k < size.y; k++)
             {
                 map[i].Add(null);
             }
         }
-        Cube = Cub;
-        this.rate = rate;
-        map[5][5] = new Room(new Vector2Int(5, 5));
-        
-
-        map[5][4] = new Room(new Vector2Int(5, 4), map[5][5]);
-        map[5][6] = new Room(new Vector2Int(5, 6), map[5][5]);
-        map[6][5] = new Room(new Vector2Int(6, 5), map[5][5]);
-        map[4][5] = new Room(new Vector2Int(4, 5), map[5][5]);
-
-        map[5][5].enfants.Add(map[5][4]);
-        map[5][5].enfants.Add(map[4][5]);
-        map[5][5].enfants.Add(map[5][6]);
-        map[5][5].enfants.Add(map[6][5]);
-
-
+        //generate the five mains rooms
+        map[size.x/2][size.y / 2] = new Room(new Vector2Int(size.x / 2, size.y / 2));
+        List<Vector2Int> Neightboors = new List<Vector2Int>() { new Vector2Int(size.x / 2, size.x / 2 + 1), new Vector2Int(size.x / 2 + 1, size.x / 2), new Vector2Int(size.x / 2, size.x / 2-1), new Vector2Int(size.x / 2 - 1, size.x / 2) };
+        for (int i = 0; i< 4; i++)
+        {
+            map[Neightboors[i].x][Neightboors[i].y] = new Room(Neightboors[i], map[5][5]);
+            map[size.x / 2][size.y / 2].enfants.Add(map[Neightboors[i].x][Neightboors[i].y]);
+        }
+        //generate the rest with the given parameter
+        gameObject.transform.position = (Vector3) new Vector3Int(size.x / 2, size.y / 2,-10);
         Generate();
-        Draw(1, new Color(0,0,0),map[5][5]);
+        //Draw it
+        Draw(1, new Color(0,0,0), map[size.x / 2][size.y / 2]);
+
     }
-//Dessine la map pour donner un aperçue (recurcif)
+    //Dessine la map pour donner un aperçue (recurcif)
     void Draw(int mode, Color color, Room First = null,int direction = 0 )
     {
         if (mode == 0)
@@ -109,7 +110,7 @@ public class Map
                 {
                     model = 3;
                 }
-                Draw(1, color + new Color((float)1 / 10, 0, 0), First.enfants[i],model);
+                Draw(1, color + new Color((float)1 / RedDisipation, 0, 0), First.enfants[i],model);
             }
 
         }
@@ -121,12 +122,12 @@ public class Map
     {
 
         //current is the current generation and child will be its childs
-        List<Room> current = new List<Room>() { map[6][5], map[5][6], map[5][4], map[4][5] };
+        List<Room> current = new List<Room>() { map[size.x / 2][size.x / 2 + 1], map[size.x / 2][size.x / 2 - 1], map[size.x / 2 - 1][size.x / 2], map[size.x / 2 + 1][size.x / 2] };
         List<Room> child = new List<Room>();
         //keep track of the amount of room  added
         int currentRooms = 0;
         //loop for a certain depth and terminate if there is anought rooms
-        for (int i = 0; i < 8 && currentRooms < rooms; i++)
+        for (int i = 0; i < iterations && currentRooms < rooms; i++)
         {
             //tem keep track of the count of the current population since it will change
             int tem = current.Count;
@@ -143,7 +144,7 @@ public class Map
                     Roomsamount = chances[Random.Range(0, chances.Count)];
                 }
                 //else if there is less path than the choosen roomsamout, the rooms amount will be the paths amount
-                else if (Roomsamount > paths.Count) {
+                if (Roomsamount > paths.Count) {
                     Roomsamount = paths.Count;
                 }
                 //for the roomsamount
@@ -171,6 +172,10 @@ public class Map
             //clone the child to be the next current and clear the child
             current = clone(child);
             child.Clear();
+            if (currentRooms == rooms)
+            {
+                break;
+            }
         }
     }
     int Percentage(List<int> chances)
