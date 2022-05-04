@@ -5,7 +5,9 @@ using UnityEngine;
 public class Map : MonoBehaviour
 {
     // Start is called before the first frame update
-    List<List<Room>> map = new List<List<Room>>();
+    static List<List<Room>> map = new List<List<Room>>();
+    public static List<GameObject> doors = new List<GameObject>();
+    public static Vector2Int currentRoom;
     [SerializeField]
     private int rooms;
     [SerializeField]
@@ -23,8 +25,49 @@ public class Map : MonoBehaviour
     //force the amount of room wanted to be in the map
     [SerializeField]
     private bool IWantThoseRooms;
+
+
+    //move the player to the direction wanted
+    public static void move(Vector2Int newPosition)
+    {
+        currentRoom = currentRoom + newPosition;
+        for (int i = 0; i < 4; i += 1)
+        {
+            doors[i].SetActive(false);
+        }
+        List<Vector2Int> neigth = new List<Vector2Int>() { currentRoom + new Vector2Int(0, 1), currentRoom + new Vector2Int(0, -1), currentRoom + new Vector2Int(1, 0), currentRoom + new Vector2Int(-1, 0) };
+        for (int i = 0; i < 4; i++)
+        {
+            for (int k = 0; k < map[currentRoom.x][currentRoom.y].enfants.Count; k++)
+            {
+                if(map[currentRoom.x][currentRoom.y].enfants[k].position == neigth[i])
+                {
+                    doors[i].SetActive(true);
+                }
+            }
+            try
+            {
+                if (map[currentRoom.x][currentRoom.y].father.position == neigth[i])
+                {
+                    doors[i].SetActive(true);
+                }
+            }
+            catch { print(map[currentRoom.x][currentRoom.y].father); }
+           
+            
+        }
+    }
     void Awake()
     {
+        map = new List<List<Room>>();
+        doors = new List<GameObject>();
+        List<string> doorsnames = new List<string>() { "Door", "Door1", "Door2", "Door3" };
+        for (int i = 0; i < 4; i += 1)
+        {
+            doors.Add(GameObject.Find(doorsnames[i]));
+        }
+        currentRoom = new Vector2Int(size.x / 2, size.y / 2);
+        GetComponent<Camera>().orthographicSize = size.x/1.5f;
         for (int i = 0; i < size.x; i++)
         {
             map.Add(new List<Room>());
@@ -38,11 +81,11 @@ public class Map : MonoBehaviour
         List<Vector2Int> Neightboors = new List<Vector2Int>() { new Vector2Int(size.x / 2, size.x / 2 + 1), new Vector2Int(size.x / 2 + 1, size.x / 2), new Vector2Int(size.x / 2, size.x / 2-1), new Vector2Int(size.x / 2 - 1, size.x / 2) };
         for (int i = 0; i< 4; i++)
         {
-            map[Neightboors[i].x][Neightboors[i].y] = new Room(Neightboors[i], map[5][5]);
+            map[Neightboors[i].x][Neightboors[i].y] = new Room(Neightboors[i], map[size.x / 2][size.y / 2]);
             map[size.x / 2][size.y / 2].enfants.Add(map[Neightboors[i].x][Neightboors[i].y]);
         }
         //generate the rest with the given parameter
-        gameObject.transform.position = (Vector3) new Vector3Int(size.x / 2, size.y / 2,-10);
+        gameObject.transform.position =  new Vector3Int(size.x / 2, size.y / 2,-10);
         Generate();
         //Draw it
         Draw(1, new Color(0,0,0), map[size.x / 2][size.y / 2]);
@@ -176,8 +219,10 @@ public class Map : MonoBehaviour
                     //we create a new room at this position
                     Room temp = new Room(ran, current[0]);
                     //we add the new room to the map and as the current room's child
-                    map[ran.x][ran.y] = temp;
                     current[0].enfants.Add(temp);
+                    map[ran.x][ran.y] = temp;
+                    
+
                     //we increase the amount of rooms and add the child to child
                     currentRooms += 1;
                     child.Add(temp);
