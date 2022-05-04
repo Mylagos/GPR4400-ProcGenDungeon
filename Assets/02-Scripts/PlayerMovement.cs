@@ -60,22 +60,22 @@ public class PlayerMovement : MonoBehaviour
             }
         }
        
-        if (_input.actions["up"].triggered)
+        if (_input.actions["up"].IsPressed())
         {
             Move(new Vector3(0, 1, 0),2);
             OnDoor = false;
         }
-        else if (_input.actions["down"].triggered)
+        else if (_input.actions["down"].IsPressed())
         {
             Move(new Vector3(0, -1, 0),0);
             OnDoor = false;
         }
-        else if (_input.actions["left"].triggered)
+        else if (_input.actions["left"].IsPressed())
         {
             Move(new Vector3(-1, 0, 0),3);
             OnDoor = false;
         }
-        else if (_input.actions["right"].triggered)
+        else if (_input.actions["right"].IsPressed())
         {
             Move(new Vector3(1, 0, 0),1);
             OnDoor = false;

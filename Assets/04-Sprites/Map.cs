@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class Map : MonoBehaviour
@@ -25,17 +26,23 @@ public class Map : MonoBehaviour
     //force the amount of room wanted to be in the map
     [SerializeField]
     private bool IWantThoseRooms;
-
-
+    [SerializeField]
+    private TextMeshPro text;
     //move the player to the direction wanted
+    private void Update()
+    {
+        text.text = map[currentRoom.x][currentRoom.y].name;
+    }
     public static void move(Vector2Int newPosition)
     {
+        
         currentRoom = currentRoom + newPosition;
         for (int i = 0; i < 4; i += 1)
         {
             doors[i].SetActive(false);
         }
-        List<Vector2Int> neigth = new List<Vector2Int>() { currentRoom + new Vector2Int(0, 1), currentRoom + new Vector2Int(0, -1), currentRoom + new Vector2Int(1, 0), currentRoom + new Vector2Int(-1, 0) };
+       
+        List <Vector2Int> neigth = new List<Vector2Int>() { currentRoom + new Vector2Int(0, 1), currentRoom + new Vector2Int(0, -1), currentRoom + new Vector2Int(1, 0), currentRoom + new Vector2Int(-1, 0) };
         for (int i = 0; i < 4; i++)
         {
             for (int k = 0; k < map[currentRoom.x][currentRoom.y].enfants.Count; k++)
@@ -52,11 +59,13 @@ public class Map : MonoBehaviour
                     doors[i].SetActive(true);
                 }
             }
-            catch { print(map[currentRoom.x][currentRoom.y].father); }
+            catch { //print(map[currentRoom.x][currentRoom.y].father);
+            }
            
             
         }
     }
+    
     void Awake()
     {
         map = new List<List<Room>>();
@@ -81,7 +90,9 @@ public class Map : MonoBehaviour
         List<Vector2Int> Neightboors = new List<Vector2Int>() { new Vector2Int(size.x / 2, size.x / 2 + 1), new Vector2Int(size.x / 2 + 1, size.x / 2), new Vector2Int(size.x / 2, size.x / 2-1), new Vector2Int(size.x / 2 - 1, size.x / 2) };
         for (int i = 0; i< 4; i++)
         {
+            string al = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
             map[Neightboors[i].x][Neightboors[i].y] = new Room(Neightboors[i], map[size.x / 2][size.y / 2]);
+            map[Neightboors[i].x][Neightboors[i].y].name = al[Random.Range(0, al.Length)].ToString();
             map[size.x / 2][size.y / 2].enfants.Add(map[Neightboors[i].x][Neightboors[i].y]);
         }
         //generate the rest with the given parameter
@@ -89,6 +100,25 @@ public class Map : MonoBehaviour
         Generate();
         //Draw it
         Draw(1, new Color(0,0,0), map[size.x / 2][size.y / 2]);
+
+
+
+        for (int i = 0; i < size.x; i++)
+        {
+           
+            for (int k = 0; k < size.y; k++)
+            {
+                try
+                {
+                   if (new Vector2Int(i,k) != map[i][k].position)
+                    {
+                        print(new Vector2Int(i, k) + "!=" + map[i][k].position);
+                    }
+                }
+                catch { }
+                
+            }
+        }
 
     }
     //Dessine la map pour donner un aperçue (recurcif)
@@ -110,7 +140,7 @@ public class Map : MonoBehaviour
         else
         {
             GameObject temp = GameObject.Instantiate(Cube,(Vector2) First.position, Quaternion.identity);
-
+            temp.transform.GetChild(0).transform.GetComponent<TextMeshPro>().text = First.name;
             temp.GetComponent<SpriteRenderer>().color = color;
             Debug.Log(First.enfants.Count);
             if (direction == 0)
@@ -179,15 +209,26 @@ public class Map : MonoBehaviour
         return temp;
     }
     //generate the maps using the parameters given
+    void pri(List<Vector2Int> o)
+    {
+        string final = "";
+        for(int i = 0; i < o.Count; i += 1)
+        {
+            final += o[i].ToString();
+        }
+        print(final);
+    }
     void Generate(bool redo = false, int currentRooms = 0)
     {
+        string al = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
         //set the current population and the childs
         List<Room> current = new List<Room>() { map[size.x / 2][size.x / 2 + 1], map[size.x / 2][size.x / 2 - 1], map[size.x / 2 - 1][size.x / 2], map[size.x / 2 + 1][size.x / 2] };
         List<Room> child = new List<Room>();
         //we add a random child her to avoid max depth recursion when using the IWantThoseRooms function
         if (redo)
         {
-            current.Add(RandomChild());
+            Room temo = RandomChild();
+            current.Add(temo);
         }
 
         //loop for a certain depth and terminate if there is anought rooms
@@ -199,6 +240,8 @@ public class Map : MonoBehaviour
             for (int k = 0; k < tem && currentRooms < rooms; k++) {
                 //"availables" return the availables neighboors
                 List<Vector2Int> paths = availables(current[0].position);
+                print(current[0].position);
+                pri(paths);
                 //"chances" is currently the chance of having a "Roomsamount" of child
                 int Roomsamount = Percentage(MainChance);
                 //if the current room is the last of the population and no one had child, it will have at least one
@@ -218,6 +261,7 @@ public class Map : MonoBehaviour
                     Vector2Int ran = paths[Random.Range(0, paths.Count)];
                     //we create a new room at this position
                     Room temp = new Room(ran, current[0]);
+                    temp.name = al[Random.Range(0, al.Length)].ToString();
                     //we add the new room to the map and as the current room's child
                     current[0].enfants.Add(temp);
                     map[ran.x][ran.y] = temp;
@@ -226,6 +270,7 @@ public class Map : MonoBehaviour
                     //we increase the amount of rooms and add the child to child
                     currentRooms += 1;
                     child.Add(temp);
+                    paths.Remove(ran);
                 }
                 //remove the first current since we always only deal with the first one
                 current.RemoveAt(0);
@@ -279,7 +324,7 @@ public class Map : MonoBehaviour
     {
         
         List<Vector2Int> paths = new List<Vector2Int>();
-        Vector2Int[] vectors = { pos + new Vector2Int(0, 1), pos + new Vector2Int(1, 0), pos + new Vector2Int(0, -1), pos + new Vector2Int(-1, 0) };
+        Vector2Int[] vectors = { pos + new Vector2Int(-1, 0), pos + new Vector2Int(1, 0), pos + new Vector2Int(0, -1), pos + new Vector2Int(0, 1) };
         for (int i = 0; i < 4; i++)
         {
             try
@@ -296,6 +341,7 @@ public class Map : MonoBehaviour
 }
 public class Room
 {
+    public string name = "0";
     public Vector2Int position;
     public Room father;
     public List<Room> enfants = new List<Room>();
