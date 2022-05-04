@@ -28,6 +28,7 @@ public class Map : MonoBehaviour
     private bool IWantThoseRooms;
     [SerializeField]
     private TextMeshPro text;
+    
     //move the player to the direction wanted
     private void Update()
     {

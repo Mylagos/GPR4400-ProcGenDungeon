@@ -17,6 +17,9 @@ public class PlayerMovement : MonoBehaviour
     int direction = 0;
     int[] directions = {0, 90, 180, 270};
     bool OnDoor;
+
+    public static bool Turn;
+    public static bool IsMooving;
     private void Awake()
     {
         _input = GetComponent<PlayerInput>();
@@ -39,13 +42,19 @@ public class PlayerMovement : MonoBehaviour
         {
             direction = dir;
             transform.eulerAngles = new Vector3(0, 0, directions[dir]);
-            print(directions[dir]);
         }
     }
     private void Update()
     {
+        if (transform.position == point.transform.position)
+        {
+            IsMooving = false;
+        }
+        else
+        {
+            IsMooving = true;
+        }
 
-        
         List<Vector3> newpos = new List<Vector3>() { new Vector3(0, -4) , new Vector3(0, 4), new Vector3(-7, 0), new Vector3(7, 0) };
         List<Vector2Int> newdir = new List<Vector2Int>() { new Vector2Int(0, 1), new Vector2Int(0, -1), new Vector2Int(1, 0), new Vector2Int(-1, 0) };
         //Check if the player is on a door, it then set the bool ondoor true so it doesn't do it each frame, ondoor is flase when the player mooves
@@ -57,28 +66,21 @@ public class PlayerMovement : MonoBehaviour
                 transform.position = newpos[i];
                 point.transform.position = newpos[i];
                 OnDoor = true;
+                break;
             }
         }
-       
-        if (_input.actions["up"].IsPressed())
+        List<string> InputMouvementsNames = new List<string>() {"up", "down", "right","left" };
+        int[] tem = { 2, 0, 1,3 };
+        Turn = false;
+        for (int i = 0; i<4 && IsMooving == false;i+=1)
         {
-            Move(new Vector3(0, 1, 0),2);
-            OnDoor = false;
-        }
-        else if (_input.actions["down"].IsPressed())
-        {
-            Move(new Vector3(0, -1, 0),0);
-            OnDoor = false;
-        }
-        else if (_input.actions["left"].IsPressed())
-        {
-            Move(new Vector3(-1, 0, 0),3);
-            OnDoor = false;
-        }
-        else if (_input.actions["right"].IsPressed())
-        {
-            Move(new Vector3(1, 0, 0),1);
-            OnDoor = false;
+            if (_input.actions[InputMouvementsNames[i]].IsPressed())
+            {
+                Move((Vector2) newdir[i], tem[i]);
+                OnDoor = false;
+                Turn = true;
+                break;
+            }
         }
         transform.position = Vector2.MoveTowards(transform.position, point.transform.position, speed *Time.deltaTime);
        
