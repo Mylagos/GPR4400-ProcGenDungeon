@@ -20,9 +20,10 @@ public class PlayerMovement : MonoBehaviour
 
     public static bool Turn;
     public static bool IsMooving;
-    private void Awake()
+    private void Start()
     {
         _input = GetComponent<PlayerInput>();
+        Map.currentRoom.mapp.Add(transform.position);
       
     }
     
@@ -34,7 +35,12 @@ public class PlayerMovement : MonoBehaviour
             {
                 Vector3 temp = point.transform.position + deplacement;
                 if(temp.y > ymax.x && temp.y < ymax.y && temp.x > xmax.x && temp.x < xmax.y){
-                    point.transform.position += deplacement;
+                    if (!Map.currentRoom.mapp.Contains(point.transform.position + deplacement))
+                    {
+                        Map.currentRoom.mapp.Remove(transform.position);
+                        point.transform.position += deplacement;
+                        Map.currentRoom.mapp.Add(point.transform.position);
+                    }
                 }
             }
         }
@@ -74,7 +80,7 @@ public class PlayerMovement : MonoBehaviour
         Turn = false;
         for (int i = 0; i<4 && IsMooving == false;i+=1)
         {
-            if (_input.actions[InputMouvementsNames[i]].IsPressed())
+            if (_input.actions[InputMouvementsNames[i]].triggered)
             {
                 Move((Vector2) newdir[i], tem[i]);
                 OnDoor = false;

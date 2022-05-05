@@ -8,7 +8,10 @@ public class Map : MonoBehaviour
     // Start is called before the first frame update
     static List<List<Room>> map = new List<List<Room>>();
     public static List<GameObject> doors = new List<GameObject>();
-    public static Vector2Int currentRoom;
+    public static Vector2Int currentRoomPosition;
+    [SerializeField]
+    public static Room currentRoom;
+
     [SerializeField]
     private int rooms;
     [SerializeField]
@@ -32,30 +35,35 @@ public class Map : MonoBehaviour
     //move the player to the direction wanted
     private void Update()
     {
-        text.text = map[currentRoom.x][currentRoom.y].name;
+        text.text = map[currentRoomPosition.x][currentRoomPosition.y].name;
+        if (PlayerMovement.Turn)
+        {
+            pri(currentRoom.mapp);
+        }
     }
     public static void move(Vector2Int newPosition)
     {
-        
-        currentRoom = currentRoom + newPosition;
+
+        currentRoomPosition = currentRoomPosition + newPosition;
+        currentRoom = map[currentRoomPosition.x][currentRoomPosition.y];
         for (int i = 0; i < 4; i += 1)
         {
             doors[i].SetActive(false);
         }
        
-        List <Vector2Int> neigth = new List<Vector2Int>() { currentRoom + new Vector2Int(0, 1), currentRoom + new Vector2Int(0, -1), currentRoom + new Vector2Int(1, 0), currentRoom + new Vector2Int(-1, 0) };
+        List <Vector2Int> neigth = new List<Vector2Int>() { currentRoomPosition + new Vector2Int(0, 1), currentRoomPosition + new Vector2Int(0, -1), currentRoomPosition + new Vector2Int(1, 0), currentRoomPosition + new Vector2Int(-1, 0) };
         for (int i = 0; i < 4; i++)
         {
-            for (int k = 0; k < map[currentRoom.x][currentRoom.y].enfants.Count; k++)
+            for (int k = 0; k < map[currentRoomPosition.x][currentRoomPosition.y].enfants.Count; k++)
             {
-                if(map[currentRoom.x][currentRoom.y].enfants[k].position == neigth[i])
+                if(map[currentRoomPosition.x][currentRoomPosition.y].enfants[k].position == neigth[i])
                 {
                     doors[i].SetActive(true);
                 }
             }
             try
             {
-                if (map[currentRoom.x][currentRoom.y].father.position == neigth[i])
+                if (map[currentRoomPosition.x][currentRoomPosition.y].father.position == neigth[i])
                 {
                     doors[i].SetActive(true);
                 }
@@ -69,6 +77,7 @@ public class Map : MonoBehaviour
     
     void Awake()
     {
+        
         map = new List<List<Room>>();
         doors = new List<GameObject>();
         List<string> doorsnames = new List<string>() { "Door", "Door1", "Door2", "Door3" };
@@ -76,7 +85,7 @@ public class Map : MonoBehaviour
         {
             doors.Add(GameObject.Find(doorsnames[i]));
         }
-        currentRoom = new Vector2Int(size.x / 2, size.y / 2);
+        currentRoomPosition = new Vector2Int(size.x / 2, size.y / 2);
         GetComponent<Camera>().orthographicSize = size.x/1.5f;
         for (int i = 0; i < size.x; i++)
         {
@@ -98,6 +107,7 @@ public class Map : MonoBehaviour
         }
         //generate the rest with the given parameter
         gameObject.transform.position =  new Vector3Int(size.x / 2, size.y / 2,-10);
+        currentRoom = map[size.x / 2][size.y / 2];
         Generate();
         //Draw it
         Draw(1, new Color(0,0,0), map[size.x / 2][size.y / 2]);
@@ -210,7 +220,7 @@ public class Map : MonoBehaviour
         return temp;
     }
     //generate the maps using the parameters given
-    void pri(List<Vector2Int> o)
+    void pri(List<Vector2> o)
     {
         string final = "";
         for(int i = 0; i < o.Count; i += 1)
@@ -242,7 +252,6 @@ public class Map : MonoBehaviour
                 //"availables" return the availables neighboors
                 List<Vector2Int> paths = availables(current[0].position);
                 print(current[0].position);
-                pri(paths);
                 //"chances" is currently the chance of having a "Roomsamount" of child
                 int Roomsamount = Percentage(MainChance);
                 //if the current room is the last of the population and no one had child, it will have at least one
@@ -342,14 +351,24 @@ public class Map : MonoBehaviour
 }
 public class Room
 {
+    public Vector2Int size;
+
     public string name = "0";
     public Vector2Int position;
     public Room father;
     public List<Room> enfants = new List<Room>();
     public bool Dead = false;
-    public Room(Vector2Int position, Room father = null)
+    public GameObject Tilemap;
+    public int[,] map;
+    public List<Vector2> mapp = new List<Vector2>();
+    public Room(Vector2Int position, Room father = null, Vector2Int size = default(Vector2Int),GameObject Tilemap = null)
     {
+        
         this.position = position;
         this.father = father;
+        this.size = size;
+        this.Tilemap = Tilemap;
+        map = new int[size.x,size.y];
+
     }
 }

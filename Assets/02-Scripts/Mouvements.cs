@@ -69,7 +69,7 @@ public partial class @Mouvements : IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""adde90a5-41f8-4c4d-80d0-59d9583de38d"",
                     ""path"": ""<Keyboard>/d"",
-                    ""interactions"": ""Hold(duration=0.4,pressPoint=0.5)"",
+                    ""interactions"": ""Press"",
                     ""processors"": """",
                     ""groups"": ""keyboard"",
                     ""action"": ""right"",

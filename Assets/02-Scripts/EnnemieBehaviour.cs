@@ -4,14 +4,19 @@ using UnityEngine;
 
 public class EnnemieBehaviour : MonoBehaviour
 {
+    [SerializeField]
     private GameObject point;
+    [SerializeField]
     private GameObject body;
     [SerializeField]
     private float speed;
     private void Awake()
     {
+        print("stare");
         point = transform.GetChild(0).gameObject;
         body = transform.GetChild(1).gameObject;
+        Map.currentRoom.mapp.Add(point.transform.position);
+       
     }
     private void Update()
     {
@@ -19,7 +24,14 @@ public class EnnemieBehaviour : MonoBehaviour
         if (PlayerMovement.Turn)
         {
             print("omggg");
-            point.transform.localPosition += CheapPathFinding();
+            var temp = point.transform.position + CheapPathFinding();
+            if (!Map.currentRoom.mapp.Contains(temp))
+            {
+                Map.currentRoom.mapp.Remove(point.transform.position);
+                point.transform.position = temp;
+                Map.currentRoom.mapp.Add(point.transform.position);
+            }
+           
         }
     }
     private Vector3 CheapPathFinding()
@@ -27,23 +39,55 @@ public class EnnemieBehaviour : MonoBehaviour
         Vector2 his = GameObject.Find("point").transform.position;
         Vector2 mine = point.transform.position;
         print(his + " : " + mine);
-        if (his.x < mine.x)
+        if (Random.Range(0, 2) == 0)
         {
-            return new Vector3(-1, 0);
+            if (his.x < mine.x)
+            {
+                return new Vector3(-1, 0);
+            }
+            if (his.y < mine.y)
+            {
+                return new Vector3(0, -1);
+            }
         }
-        if (his.y < mine.y)
+        else
         {
-            return new Vector3(0, -1);
+            if (his.y < mine.y)
+            {
+                return new Vector3(0, -1);
+            }
+            if (his.x < mine.x)
+            {
+                return new Vector3(-1, 0);
+            }
+           
         }
-        if (his.x > mine.x)
+        if (Random.Range(0, 2) == 0)
         {
-            return new Vector3(1, 0);
+            if (his.x > mine.x)
+            {
+                return new Vector3(1, 0);
+            }
+            if (his.y > mine.y)
+            {
+                return new Vector3(0, 1);
+            }
         }
-        if (his.y > mine.y)
+        else
         {
-            return new Vector3(0, 1);
+            if (his.y > mine.y)
+            {
+                return new Vector3(0, 1);
+            }
+            if (his.x > mine.x)
+            {
+                return new Vector3(1, 0);
+            }
+           
         }
-        return new Vector3(0,0);
+        return new Vector3(0, 0);
+
+
 
     }
 }

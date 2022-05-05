@@ -24,7 +24,7 @@ MonoBehaviour:
   m_MinSize: {x: 400, y: 200}
   m_MaxSize: {x: 32384, y: 16192}
   vertical: 0
-  controlID: 51336
+  controlID: 57060
 --- !u!114 &2
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -86,7 +86,7 @@ MonoBehaviour:
     m_HSlider: 0
     m_VSlider: 0
     m_IgnoreScrollWheelUntilClicked: 0
-    m_EnableMouseInput: 0
+    m_EnableMouseInput: 1
     m_EnableSliderZoomHorizontal: 0
     m_EnableSliderZoomVertical: 0
     m_UniformScale: 1
@@ -141,7 +141,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 200}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 1
-  controlID: 51337
+  controlID: 57061
 --- !u!114 &4
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -167,7 +167,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 100}
   m_MaxSize: {x: 24288, y: 8096}
   vertical: 0
-  controlID: 51338
+  controlID: 57062
 --- !u!114 &5
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -225,8 +225,8 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: e0940000
-      m_LastClickedID: 38112
+      m_SelectedIDs: d089fbff
+      m_LastClickedID: -292400
       m_ExpandedIDs: 3a9dfcff3e9dfcff80a2fcff6ef9fcff92f9fcff1a40fdffeedffdff28fbffffe0940000f0940000fa940000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
@@ -525,9 +525,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 4, y: 1.883, z: 0}
+    m_Target: {x: 5.7912264, y: 5.8023663, z: -0.09601594}
     speed: 2
-    m_Value: {x: 4, y: 1.883, z: 0}
+    m_Value: {x: 5.7912264, y: 5.8023663, z: -0.09601594}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -578,9 +578,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 0.8004305
+    m_Target: 10.402018
     speed: 2
-    m_Value: 0.8004305
+    m_Value: 10.402018
   m_Ortho:
     m_Target: 1
     speed: 2
@@ -795,9 +795,9 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: 3e9dfcff
-    m_LastClickedInstanceID: -221890
-    m_HadKeyboardFocusLastEvent: 1
+    m_SelectedInstanceIDs: 00950000
+    m_LastClickedInstanceID: 38144
+    m_HadKeyboardFocusLastEvent: 0
     m_ExpandedInstanceIDs: c6230000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
