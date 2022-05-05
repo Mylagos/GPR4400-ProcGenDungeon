@@ -11,7 +11,7 @@ public class Map : MonoBehaviour
     public static Vector2Int currentRoomPosition;
     [SerializeField]
     public static Room currentRoom;
-
+    
     [SerializeField]
     private int rooms;
     [SerializeField]
@@ -31,7 +31,9 @@ public class Map : MonoBehaviour
     private bool IWantThoseRooms;
     [SerializeField]
     private TextMeshPro text;
-    
+    [SerializeField]
+    private List<GameObject> Ennemies = new List<GameObject>();
+
     //move the player to the direction wanted
     private void Update()
     {
@@ -44,35 +46,10 @@ public class Map : MonoBehaviour
     public static void move(Vector2Int newPosition)
     {
 
+        currentRoom.setActive(false);
         currentRoomPosition = currentRoomPosition + newPosition;
         currentRoom = map[currentRoomPosition.x][currentRoomPosition.y];
-        for (int i = 0; i < 4; i += 1)
-        {
-            doors[i].SetActive(false);
-        }
-       
-        List <Vector2Int> neigth = new List<Vector2Int>() { currentRoomPosition + new Vector2Int(0, 1), currentRoomPosition + new Vector2Int(0, -1), currentRoomPosition + new Vector2Int(1, 0), currentRoomPosition + new Vector2Int(-1, 0) };
-        for (int i = 0; i < 4; i++)
-        {
-            for (int k = 0; k < map[currentRoomPosition.x][currentRoomPosition.y].enfants.Count; k++)
-            {
-                if(map[currentRoomPosition.x][currentRoomPosition.y].enfants[k].position == neigth[i])
-                {
-                    doors[i].SetActive(true);
-                }
-            }
-            try
-            {
-                if (map[currentRoomPosition.x][currentRoomPosition.y].father.position == neigth[i])
-                {
-                    doors[i].SetActive(true);
-                }
-            }
-            catch { //print(map[currentRoom.x][currentRoom.y].father);
-            }
-           
-            
-        }
+        currentRoom.setActive(true);
     }
     
     void Awake()
@@ -96,12 +73,13 @@ public class Map : MonoBehaviour
             }
         }
         //generate the five mains rooms
-        map[size.x/2][size.y / 2] = new Room(new Vector2Int(size.x / 2, size.y / 2));
+        print(Ennemies.Count);
+        map[size.x/2][size.y / 2] = new Room(new Vector2Int(size.x / 2, size.y / 2), Ennemies);
         List<Vector2Int> Neightboors = new List<Vector2Int>() { new Vector2Int(size.x / 2, size.x / 2 + 1), new Vector2Int(size.x / 2 + 1, size.x / 2), new Vector2Int(size.x / 2, size.x / 2-1), new Vector2Int(size.x / 2 - 1, size.x / 2) };
         for (int i = 0; i< 4; i++)
         {
             string al = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            map[Neightboors[i].x][Neightboors[i].y] = new Room(Neightboors[i], map[size.x / 2][size.y / 2]);
+            map[Neightboors[i].x][Neightboors[i].y] = new Room(Neightboors[i], Ennemies, map[size.x / 2][size.y / 2]);
             map[Neightboors[i].x][Neightboors[i].y].name = al[Random.Range(0, al.Length)].ToString();
             map[size.x / 2][size.y / 2].enfants.Add(map[Neightboors[i].x][Neightboors[i].y]);
         }
@@ -111,25 +89,9 @@ public class Map : MonoBehaviour
         Generate();
         //Draw it
         Draw(1, new Color(0,0,0), map[size.x / 2][size.y / 2]);
+        currentRoom.setActive(true);
 
 
-
-        for (int i = 0; i < size.x; i++)
-        {
-           
-            for (int k = 0; k < size.y; k++)
-            {
-                try
-                {
-                   if (new Vector2Int(i,k) != map[i][k].position)
-                    {
-                        print(new Vector2Int(i, k) + "!=" + map[i][k].position);
-                    }
-                }
-                catch { }
-                
-            }
-        }
 
     }
     //Dessine la map pour donner un aperçue (recurcif)
@@ -270,7 +232,7 @@ public class Map : MonoBehaviour
                     //we take a random path
                     Vector2Int ran = paths[Random.Range(0, paths.Count)];
                     //we create a new room at this position
-                    Room temp = new Room(ran, current[0]);
+                    Room temp = new Room(ran, Ennemies, current[0]);
                     temp.name = al[Random.Range(0, al.Length)].ToString();
                     //we add the new room to the map and as the current room's child
                     current[0].enfants.Add(temp);
@@ -357,18 +319,63 @@ public class Room
     public Vector2Int position;
     public Room father;
     public List<Room> enfants = new List<Room>();
-    public bool Dead = false;
     public GameObject Tilemap;
-    public int[,] map;
     public List<Vector2> mapp = new List<Vector2>();
-    public Room(Vector2Int position, Room father = null, Vector2Int size = default(Vector2Int),GameObject Tilemap = null)
+    public List<GameObject> ennemies = new List<GameObject>();
+
+    public Room(Vector2Int position, List<GameObject> ennemies, Room father = null, Vector2Int size = default(Vector2Int), GameObject Tilemap = null)
     {
         
         this.position = position;
         this.father = father;
         this.size = size;
         this.Tilemap = Tilemap;
-        map = new int[size.x,size.y];
+      
+        for (int i = 0;i<Random.Range(0,4);i++)
+        {
+            var temo = GameObject.Instantiate(ennemies[Random.Range(0, ennemies.Count)], new Vector3(Random.Range(-7, 7), Random.Range(4, -4)), Quaternion.identity);
+            temo.SetActive(false);
+            this.ennemies.Add(temo);
+        }
 
+    }
+    public void setActive(bool enable)
+    {
+
+        if (enable == true)
+        {
+            for (int i = 0; i < 4; i += 1)
+            {
+                Map.doors[i].SetActive(false);
+            }
+            List<Vector2Int> neigth = new List<Vector2Int>() { position + new Vector2Int(0, 1), position + new Vector2Int(0, -1), position + new Vector2Int(1, 0), position + new Vector2Int(-1, 0) };
+            for (int i = 0; i < 4; i++)
+            {
+                for (int k = 0; k < enfants.Count; k++)
+                {
+                    if (enfants[k].position == neigth[i])
+                    {
+                        Map.doors[i].SetActive(true);
+                    }
+                }
+                try
+                {
+                    if (father.position == neigth[i])
+                    {
+                        Map.doors[i].SetActive(true);
+                    }
+                }
+                catch
+                { //print(map[currentRoom.x][currentRoom.y].father);
+                }
+            }
+        }
+        for(int i = 0; i < ennemies.Count; i++)
+        {
+            ennemies[i].SetActive(enable);
+        }
+       
+
+       
     }
 }
