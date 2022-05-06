@@ -37,6 +37,11 @@ public class Map : MonoBehaviour
     private Vector2 minimapPosition;
     [SerializeField]
     private GameObject minipmapDady;
+    [SerializeField]
+    private List<Vector2Int> RoomsTypes;
+
+
+    private List<Room> EndRooms = new List<Room>();
 
     //move the player to the direction wanted
     private void Update()
@@ -49,11 +54,13 @@ public class Map : MonoBehaviour
     }
     public static void move(Vector2Int newPosition)
     {
-
-        currentRoom.setActive(false);
-        currentRoomPosition = currentRoomPosition + newPosition;
-        currentRoom = map[currentRoomPosition.x][currentRoomPosition.y];
-        currentRoom.setActive(true);
+        if (map[(currentRoomPosition + newPosition).x][(currentRoomPosition +newPosition).y] != null)
+        {
+            currentRoom.setActive(false);
+            currentRoomPosition = currentRoomPosition + newPosition;
+            currentRoom = map[currentRoomPosition.x][currentRoomPosition.y];
+            currentRoom.setActive(true);
+        }
     }
     
     void Awake()
@@ -96,9 +103,28 @@ public class Map : MonoBehaviour
         minipmapDady.transform.position = minimapPosition;
         minipmapDady.transform.localScale = (Vector2)new Vector2(0.3f, 0.3f);
 
-
+        SetEndRooms(RoomsTypes);
     }
     //Dessine la map pour donner un aperçue (recurcif)
+    private void SetEndRooms(List<Vector2Int> modeAmount)
+    {
+        var temp = EndRooms.Count;
+        while (true)
+        {
+            if (modeAmount.Count == 0 || EndRooms.Count == 0)
+            {
+                break;
+            }
+            if (modeAmount[0].y<0)
+            {
+                modeAmount.RemoveAt(0);
+            }
+            var ran = Random.Range(0, EndRooms.Count);
+            EndRooms[ran].setMode(modeAmount[0].y);
+            EndRooms.RemoveAt(ran);
+           
+        }
+    }
     void Draw(int mode, Color color, Room First = null,int direction = 0 )
     {
         if (mode == 0)
@@ -166,13 +192,7 @@ public class Map : MonoBehaviour
                 }
                 Draw(1, color + new Color(0, 0, 0), First.enfants[i],model);
             }
-            if (First.enfants.Count == 0)
-            {
-                if (Random.Range(0, 1) == 0)
-                {
-                    First.setMode(1);
-                }
-            }
+            
 
         }
        
@@ -254,6 +274,14 @@ public class Map : MonoBehaviour
                     currentRooms += 1;
                     child.Add(temp);
                     paths.Remove(ran);
+                }
+                if (Roomsamount == 0)
+                {
+                    EndRooms.Add(current[0]);
+                }
+                if (EndRooms.Contains(current[0]))
+                {
+                    EndRooms.Remove(current[0]);
                 }
                 //remove the first current since we always only deal with the first one
                 current.RemoveAt(0);
@@ -357,11 +385,15 @@ public class Room
         {
             GameObject.Destroy(ennemies[j]);
         }
-        ennemies.Clear();
-        var temp = GameObject.Instantiate(GameObject.Find("chest"), new Vector3(0, 0, 0), Quaternion.identity);
-        temp.SetActive(false);
-        ennemies.Add(temp);
-        mapp.Add(new Vector3(0, 0, 0));
+        if (mode == 0){
+            
+            ennemies.Clear();
+            var temp = GameObject.Instantiate(GameObject.Find("chest"), new Vector3(0, 0, 0), Quaternion.identity);
+            temp.SetActive(false);
+            ennemies.Add(temp);
+            mapp.Add(new Vector3(0, 0, 0));
+        }
+       
     }
 
     public void setActive(bool enable)

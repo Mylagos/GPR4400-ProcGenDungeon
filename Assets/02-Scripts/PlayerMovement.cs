@@ -99,6 +99,15 @@ public class PlayerMovement : MonoBehaviour
                 break;
             }
         }
+
+        for (int i = 0; i < 4 && IsMooving == false; i += 1)
+        {
+            if (_input.actions["god"+i.ToString()].triggered)
+            {
+                Map.move(newdir[i]);
+                break;
+            }
+        }
         if (_input.actions["Attack"].triggered)
         {
             print("attacked");

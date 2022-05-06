@@ -71,6 +71,42 @@ public partial class @Mouvements : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""god0"",
+                    ""type"": ""Button"",
+                    ""id"": ""72229a8a-2d9c-48f5-920b-ddff71af0779"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""god2"",
+                    ""type"": ""Button"",
+                    ""id"": ""b31676c6-6940-4237-8792-21ec15a7b903"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""god1"",
+                    ""type"": ""Button"",
+                    ""id"": ""d5a4a5dd-f61a-48e1-b154-739d52dcb835"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""god3"",
+                    ""type"": ""Button"",
+                    ""id"": ""cbeef825-4539-48f7-9fa0-e9af9fcbcfea"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -139,6 +175,50 @@ public partial class @Mouvements : IInputActionCollection2, IDisposable
                     ""action"": ""Attack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0d19bebd-3f2a-4147-a51f-a295be97cf3e"",
+                    ""path"": ""<Keyboard>/upArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""god0"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""161906d9-07f8-425a-aa12-2fa65e13b261"",
+                    ""path"": ""<Keyboard>/rightArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""god2"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cd4ff4b1-2530-4b48-b94c-a398d2ffab35"",
+                    ""path"": ""<Keyboard>/downArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""god1"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fccc85b1-de99-4031-9563-f855db4f6d49"",
+                    ""path"": ""<Keyboard>/leftArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""god3"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -164,6 +244,10 @@ public partial class @Mouvements : IInputActionCollection2, IDisposable
         m_player_down = m_player.FindAction("down", throwIfNotFound: true);
         m_player_left = m_player.FindAction("left", throwIfNotFound: true);
         m_player_Attack = m_player.FindAction("Attack", throwIfNotFound: true);
+        m_player_god0 = m_player.FindAction("god0", throwIfNotFound: true);
+        m_player_god2 = m_player.FindAction("god2", throwIfNotFound: true);
+        m_player_god1 = m_player.FindAction("god1", throwIfNotFound: true);
+        m_player_god3 = m_player.FindAction("god3", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -228,6 +312,10 @@ public partial class @Mouvements : IInputActionCollection2, IDisposable
     private readonly InputAction m_player_down;
     private readonly InputAction m_player_left;
     private readonly InputAction m_player_Attack;
+    private readonly InputAction m_player_god0;
+    private readonly InputAction m_player_god2;
+    private readonly InputAction m_player_god1;
+    private readonly InputAction m_player_god3;
     public struct PlayerActions
     {
         private @Mouvements m_Wrapper;
@@ -237,6 +325,10 @@ public partial class @Mouvements : IInputActionCollection2, IDisposable
         public InputAction @down => m_Wrapper.m_player_down;
         public InputAction @left => m_Wrapper.m_player_left;
         public InputAction @Attack => m_Wrapper.m_player_Attack;
+        public InputAction @god0 => m_Wrapper.m_player_god0;
+        public InputAction @god2 => m_Wrapper.m_player_god2;
+        public InputAction @god1 => m_Wrapper.m_player_god1;
+        public InputAction @god3 => m_Wrapper.m_player_god3;
         public InputActionMap Get() { return m_Wrapper.m_player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -261,6 +353,18 @@ public partial class @Mouvements : IInputActionCollection2, IDisposable
                 @Attack.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttack;
                 @Attack.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttack;
                 @Attack.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttack;
+                @god0.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnGod0;
+                @god0.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnGod0;
+                @god0.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnGod0;
+                @god2.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnGod2;
+                @god2.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnGod2;
+                @god2.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnGod2;
+                @god1.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnGod1;
+                @god1.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnGod1;
+                @god1.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnGod1;
+                @god3.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnGod3;
+                @god3.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnGod3;
+                @god3.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnGod3;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -280,6 +384,18 @@ public partial class @Mouvements : IInputActionCollection2, IDisposable
                 @Attack.started += instance.OnAttack;
                 @Attack.performed += instance.OnAttack;
                 @Attack.canceled += instance.OnAttack;
+                @god0.started += instance.OnGod0;
+                @god0.performed += instance.OnGod0;
+                @god0.canceled += instance.OnGod0;
+                @god2.started += instance.OnGod2;
+                @god2.performed += instance.OnGod2;
+                @god2.canceled += instance.OnGod2;
+                @god1.started += instance.OnGod1;
+                @god1.performed += instance.OnGod1;
+                @god1.canceled += instance.OnGod1;
+                @god3.started += instance.OnGod3;
+                @god3.performed += instance.OnGod3;
+                @god3.canceled += instance.OnGod3;
             }
         }
     }
@@ -300,5 +416,9 @@ public partial class @Mouvements : IInputActionCollection2, IDisposable
         void OnDown(InputAction.CallbackContext context);
         void OnLeft(InputAction.CallbackContext context);
         void OnAttack(InputAction.CallbackContext context);
+        void OnGod0(InputAction.CallbackContext context);
+        void OnGod2(InputAction.CallbackContext context);
+        void OnGod1(InputAction.CallbackContext context);
+        void OnGod3(InputAction.CallbackContext context);
     }
 }
