@@ -11,7 +11,7 @@ public class Map : MonoBehaviour
     public static Vector2Int currentRoomPosition;
     [SerializeField]
     public static Room currentRoom;
-    
+
     [SerializeField]
     private int rooms;
     [SerializeField]
@@ -39,22 +39,19 @@ public class Map : MonoBehaviour
     private GameObject minipmapDady;
     [SerializeField]
     private List<Vector2Int> RoomsTypes;
-
+    int tries = 100;
 
     private List<Room> EndRooms = new List<Room>();
 
-    //move the player to the direction wanted
+
     private void Update()
     {
         text.text = map[currentRoomPosition.x][currentRoomPosition.y].name;
-        if (PlayerMovement.Turn>0)
-        {
-            pri(currentRoom.mapp);
-        }
     }
+    //move the player to the direction wanted
     public static void move(Vector2Int newPosition)
     {
-        if (map[(currentRoomPosition + newPosition).x][(currentRoomPosition +newPosition).y] != null)
+        if (map[(currentRoomPosition + newPosition).x][(currentRoomPosition + newPosition).y] != null)
         {
             currentRoom.setActive(false);
             currentRoomPosition = currentRoomPosition + newPosition;
@@ -62,11 +59,10 @@ public class Map : MonoBehaviour
             currentRoom.setActive(true);
         }
     }
-    
     void Awake()
     {
-        minipmapDady.transform.position = (Vector2) new Vector2Int(size.x / 2, size.y / 2);
-        
+        minipmapDady.transform.position = (Vector2)new Vector2Int(size.x / 2, size.y / 2);
+
         map = new List<List<Room>>();
         doors = new List<GameObject>();
         List<string> doorsnames = new List<string>() { "Door", "Door1", "Door2", "Door3" };
@@ -84,10 +80,9 @@ public class Map : MonoBehaviour
             }
         }
         //generate the five mains rooms
-        print(Ennemies.Count);
-        map[size.x/2][size.y / 2] = new Room(new Vector2Int(size.x / 2, size.y / 2), Ennemies);
-        List<Vector2Int> Neightboors = new List<Vector2Int>() { new Vector2Int(size.x / 2, size.x / 2 + 1), new Vector2Int(size.x / 2 + 1, size.x / 2), new Vector2Int(size.x / 2, size.x / 2-1), new Vector2Int(size.x / 2 - 1, size.x / 2) };
-        for (int i = 0; i< 4; i++)
+        map[size.x / 2][size.y / 2] = new Room(new Vector2Int(size.x / 2, size.y / 2), Ennemies);
+        List<Vector2Int> Neightboors = new List<Vector2Int>() { new Vector2Int(size.x / 2, size.x / 2 + 1), new Vector2Int(size.x / 2 + 1, size.x / 2), new Vector2Int(size.x / 2, size.x / 2 - 1), new Vector2Int(size.x / 2 - 1, size.x / 2) };
+        for (int i = 0; i < 4; i++)
         {
             string al = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
             map[Neightboors[i].x][Neightboors[i].y] = new Room(Neightboors[i], Ennemies, map[size.x / 2][size.y / 2]);
@@ -98,7 +93,7 @@ public class Map : MonoBehaviour
         currentRoom = map[size.x / 2][size.y / 2];
         Generate();
         //Draw it
-        Draw(1, new Color(1,0,0), map[size.x / 2][size.y / 2]);
+        Draw(1, new Color(1, 0, 0), map[size.x / 2][size.y / 2]);
         currentRoom.setActive(true);
         minipmapDady.transform.position = minimapPosition;
         minipmapDady.transform.localScale = (Vector2)new Vector2(0.3f, 0.3f);
@@ -106,26 +101,27 @@ public class Map : MonoBehaviour
         SetEndRooms(RoomsTypes);
     }
     //Dessine la map pour donner un aperçue (recurcif)
-    private void SetEndRooms(List<Vector2Int> modeAmount)
+    private void SetEndRooms(List<Vector2Int> RoomTypes)
     {
-        var temp = EndRooms.Count;
         while (true)
         {
-            if (modeAmount.Count == 0 || EndRooms.Count == 0)
+
+            if (RoomTypes[0].y < 1)
+            {
+                RoomTypes.RemoveAt(0);
+            }
+            if (RoomTypes.Count < 1 || EndRooms.Count < 1)
             {
                 break;
             }
-            if (modeAmount[0].y<0)
-            {
-                modeAmount.RemoveAt(0);
-            }
             var ran = Random.Range(0, EndRooms.Count);
-            EndRooms[ran].setMode(modeAmount[0].y);
+            EndRooms[ran].setMode(RoomTypes[0].x);
+            RoomTypes[0] -= new Vector2Int(0, 1);
             EndRooms.RemoveAt(ran);
-           
         }
     }
-    void Draw(int mode, Color color, Room First = null,int direction = 0 )
+    //Dwaw the minimap
+    void Draw(int mode, Color color, Room First = null, int direction = 0)
     {
         if (mode == 0)
         {
@@ -142,14 +138,12 @@ public class Map : MonoBehaviour
         }
         else
         {
-            GameObject temp = GameObject.Instantiate(Cube,(Vector2) First.position, Quaternion.identity, minipmapDady.transform);
+            GameObject temp = GameObject.Instantiate(Cube, (Vector2)First.position, Quaternion.identity, minipmapDady.transform);
             First.MapPiece = temp;
-            temp.transform.GetChild(0).transform.GetComponent<TextMeshPro>().text = First.name;
             temp.GetComponent<SpriteRenderer>().color = color;
-            Debug.Log(First.enfants.Count);
             if (direction == 0)
             {
-                temp = GameObject.Instantiate(Cube, (Vector2)First.position +new Vector2(0.5f,0), Quaternion.identity, minipmapDady.transform);
+                temp = GameObject.Instantiate(Cube, (Vector2)First.position + new Vector2(0.5f, 0), Quaternion.identity, minipmapDady.transform);
                 temp.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
                 temp.transform.localScale -= new Vector3(0, 0.25f, 0);
             }
@@ -162,7 +156,7 @@ public class Map : MonoBehaviour
             if (direction == 2)
             {
                 temp = GameObject.Instantiate(Cube, (Vector2)First.position + new Vector2(0, 0.5f), Quaternion.identity, minipmapDady.transform);
-                temp.GetComponent<SpriteRenderer>().color = new Color(1,1,1);
+                temp.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
                 temp.transform.localScale -= new Vector3(0.25f, 0, 0);
             }
             if (direction == 3)
@@ -171,57 +165,49 @@ public class Map : MonoBehaviour
                 temp.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
                 temp.transform.localScale -= new Vector3(0.25f, 0, 0);
             }
-            for (int i = 0; i < First.enfants.Count;i++)
+            for (int i = 0; i < First.enfants.Count; i++)
             {
                 int model = 0;
-                if (First.enfants[i].position.x +1== First.position.x)
+                if (First.enfants[i].position.x + 1 == First.position.x)
                 {
                     model = 0;
                 }
-                if (First.enfants[i].position.x -1== First.position.x)
+                if (First.enfants[i].position.x - 1 == First.position.x)
                 {
                     model = 1;
                 }
-                if (First.enfants[i].position.y+1 == First.position.y)
+                if (First.enfants[i].position.y + 1 == First.position.y)
                 {
                     model = 2;
                 }
-                if (First.enfants[i].position.y-1 == First.position.y)
+                if (First.enfants[i].position.y - 1 == First.position.y)
                 {
                     model = 3;
                 }
-                Draw(1, color + new Color(0, 0, 0), First.enfants[i],model);
+                Draw(1, color + new Color(0, 0, 0), First.enfants[i], model);
             }
-            
+
 
         }
-       
-    }
 
+    }
     //generate the map
     Room RandomChild()
     {
         Room temp = map[size.x / 2][size.y / 2];
-        for (int i = 0;i< Random.Range(0, iterations / 2); i++)
+        while (true)
         {
             try
             {
                 temp = temp.enfants[Random.Range(0, temp.enfants.Count)];
             }
             catch { break; }
-            
+
         }
         return temp;
     }
     //generate the maps using the parameters given
-    void pri(List<Vector2> o)
-    {
-        string final = "";
-        for(int i = 0; i < o.Count; i += 1)
-        {
-            final += o[i].ToString();
-        }
-    }
+
     void Generate(bool redo = false, int currentRooms = 0)
     {
         string al = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -231,8 +217,18 @@ public class Map : MonoBehaviour
         //we add a random child her to avoid max depth recursion when using the IWantThoseRooms function
         if (redo)
         {
-            Room temo = RandomChild();
-            current.Add(temo);
+            current.Clear();
+            for (int i = 0; i < 3; i++)
+            {
+
+                try
+                {
+                    var temp = Random.Range(0, EndRooms.Count);
+                    current.Add(EndRooms[temp]);
+                    EndRooms.RemoveAt(0);
+                }
+                catch { }
+            }
         }
 
         //loop for a certain depth and terminate if there is anought rooms
@@ -240,21 +236,22 @@ public class Map : MonoBehaviour
         {
             //tem keep track of the count of the current population since it will change
             int tem = current.Count;
-            
-            for (int k = 0; k < tem && currentRooms < rooms; k++) {
+
+            for (int k = 0; k < tem && currentRooms < rooms; k++)
+            {
                 //"availables" return the availables neighboors
                 List<Vector2Int> paths = availables(current[0].position);
-                print(current[0].position);
                 //"chances" is currently the chance of having a "Roomsamount" of child
                 int Roomsamount = Percentage(MainChance);
                 //if the current room is the last of the population and no one had child, it will have at least one
                 if (current.Count == 1 && child.Count == 0)
                 {
-                    List<int> chances = new List<int>() { 1,1,1,1,1,1, 2,2, 3 };
+                    List<int> chances = new List<int>() { 1, 1, 1, 1, 1, 1, 2, 2, 3 };
                     Roomsamount = chances[Random.Range(0, chances.Count)];
                 }
                 //else if there is less path than the choosen roomsamout, the rooms amount will be the paths amount
-                if (Roomsamount > paths.Count) {
+                if (Roomsamount > paths.Count)
+                {
                     Roomsamount = paths.Count;
                 }
                 //for the roomsamount
@@ -268,8 +265,6 @@ public class Map : MonoBehaviour
                     //we add the new room to the map and as the current room's child
                     current[0].enfants.Add(temp);
                     map[ran.x][ran.y] = temp;
-                    
-
                     //we increase the amount of rooms and add the child to child
                     currentRooms += 1;
                     child.Add(temp);
@@ -279,13 +274,10 @@ public class Map : MonoBehaviour
                 {
                     EndRooms.Add(current[0]);
                 }
-                if (EndRooms.Contains(current[0]))
-                {
-                    EndRooms.Remove(current[0]);
-                }
+
                 //remove the first current since we always only deal with the first one
                 current.RemoveAt(0);
-                
+
             }
             for (int k = 0; k < MainChance.Count; k++)
             {
@@ -294,23 +286,28 @@ public class Map : MonoBehaviour
             //clone the child to be the next current and clear the child
             current = clone(child);
             child.Clear();
-          
-            if (currentRooms == rooms)
+
+            if (currentRooms >= rooms)
             {
                 break;
             }
         }
         //if IWantThoseRooms and the amount of rooms wanted is not check, we redo the process until it works
+        tries -= 1;
+        print(EndRooms.Count);
         if (IWantThoseRooms && rooms > currentRooms)
         {
             Generate(true, currentRooms);
         }
+        print(currentRooms); ;
+
+
     }
     //retourne un nombre par weighted random par la list chances
     int Percentage(List<int> chances)
     {
         List<int> ratio = new List<int>();
-        for (int i = 0; i< chances.Count; i++)
+        for (int i = 0; i < chances.Count; i++)
         {
             for (int k = 0; k < chances[i]; k++)
             {
@@ -323,7 +320,7 @@ public class Map : MonoBehaviour
     List<Room> clone(List<Room> father)
     {
         List<Room> clo = new List<Room>();
-        for (int i = 0; i< father.Count; i++)
+        for (int i = 0; i < father.Count; i++)
         {
             clo.Add(father[i]);
         }
@@ -333,7 +330,7 @@ public class Map : MonoBehaviour
     //check la disponibilité
     List<Vector2Int> availables(Vector2Int pos)
     {
-        
+
         List<Vector2Int> paths = new List<Vector2Int>();
         Vector2Int[] vectors = { pos + new Vector2Int(-1, 0), pos + new Vector2Int(1, 0), pos + new Vector2Int(0, -1), pos + new Vector2Int(0, 1) };
         for (int i = 0; i < 4; i++)
@@ -344,12 +341,42 @@ public class Map : MonoBehaviour
                 {
                     paths.Add(vectors[i]);
                 }
-            }catch{}
-           
+            }
+            catch { }
+
         }
         return paths;
     }
+    public void Listprint(List<int> all)
+    {
+
+        string final = "";
+        for (int i = 0; i < all.Count; i += 1)
+        {
+            final += " : " + all[i].ToString();
+        }
+        print(final);
+    }
+    void Listprint(List<Vector2> all)
+    {
+        string final = "";
+        for (int i = 0; i < all.Count; i += 1)
+        {
+            final += " : " + all[i].ToString();
+        }
+        print(final);
+    }
+    void Listprint(List<string> all)
+    {
+        string final = "";
+        for (int i = 0; i < all.Count; i += 1)
+        {
+            final += " : " + all[i].ToString();
+        }
+        print(final);
+    }
 }
+
 public class Room
 {
     public Vector2Int size;
@@ -378,6 +405,7 @@ public class Room
         }
 
     }
+    //set the mode of the room : 0 = chessroom, 1 = ... 
     public void setMode(int i)
     {
         mode = i;
@@ -385,17 +413,18 @@ public class Room
         {
             GameObject.Destroy(ennemies[j]);
         }
-        if (mode == 0){
-            
+        if (mode == 0)
+        {
+
             ennemies.Clear();
             var temp = GameObject.Instantiate(GameObject.Find("chest"), new Vector3(0, 0, 0), Quaternion.identity);
             temp.SetActive(false);
             ennemies.Add(temp);
             mapp.Add(new Vector3(0, 0, 0));
         }
-       
-    }
 
+    }
+    //set the room room active or inactive
     public void setActive(bool enable)
     {
 
@@ -433,13 +462,11 @@ public class Room
             MapPiece.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0);
         }
 
-        
-        for(int i = 0; i < ennemies.Count; i++)
+
+        for (int i = 0; i < ennemies.Count; i++)
         {
             ennemies[i].SetActive(enable);
         }
-       
 
-       
     }
 }

@@ -11,54 +11,72 @@ public class EnnemieBehaviour : MonoBehaviour
     [SerializeField]
     private float speed;
     [SerializeField]
-    private float life;
+    public float life;
+    [SerializeField]
+    public float damage;
+    public float currentLife;
     bool wait;
+    public GameObject healthbar;
     private void Awake()
     {
-        print("stare");
+        currentLife = life;
         point = transform.GetChild(0).gameObject;
         body = transform.GetChild(1).gameObject;
         Map.currentRoom.mapp.Add(point.transform.position);
-       
+
+
+        // - new Vector3(0,1)to the ennemies;
+        healthbar = Instantiate(GameObject.Find("healthbar"), gameObject.transform.GetChild(1).transform.position - new Vector3(0, 1), Quaternion.identity, GameObject.Find("Canvas").transform);
+        healthbar.GetComponent<Healthbar>().Father = gameObject;
+        healthbar.GetComponent<Healthbar>().chid = true;
+        healthbar.SetActive(false);
+
     }
     private void Update()
     {
-        if (life < 0)
+        if (currentLife < 0)
         {
-            Map.currentRoom.mapp.Remove(point.transform.position);
             Destroy(gameObject);
+            Destroy(healthbar);
+            Map.currentRoom.mapp.Remove(point.transform.position);
         }
         body.transform.position = Vector2.MoveTowards(body.transform.position, point.transform.position, speed * Time.deltaTime);
-        if (PlayerMovement.Turn > 0 && wait == false )
+        if (PlayerMovement.Turn > 0 && wait == false)
         {
-            var temp = point.transform.position + CheapPathFinding();
+            var cheap = CheapPathFinding();
+            var temp = (Vector2)point.transform.position + cheap;
             if (!Map.currentRoom.mapp.Contains(temp))
             {
                 Map.currentRoom.mapp.Remove(point.transform.position);
                 point.transform.position = temp;
                 Map.currentRoom.mapp.Add(point.transform.position);
             }
-           
+            else if (temp == PlayerMovement.positiion)
+            {
+                PlayerMovement.player.GetComponent<PlayerMovement>().SetDammages(cheap, damage);
+            }
+
         }
         wait = false;
     }
-    public bool damage(Vector3 recule,float damage)
+    public bool SetDammages(Vector3 recule, float damage)
     {
+        healthbar.SetActive(true);
+        currentLife-=damage;
         wait = true;
-        if (!Map.currentRoom.mapp.Contains(point.transform.position + recule))
+        if(!Map.currentRoom.mapp.Contains(point.transform.position + recule))
         {
             Map.currentRoom.mapp.Remove(point.transform.position);
             point.transform.position += recule;
             Map.currentRoom.mapp.Add(point.transform.position);
         }
-        life -= damage;
-        if (life < 0)
+        if (currentLife < 0)
         {
             return true;
         }
         return false;
     }
-    private Vector3 CheapPathFinding()
+    private Vector2 CheapPathFinding()
     {
         Vector2 his = GameObject.Find("point").transform.position;
         Vector2 mine = point.transform.position;
@@ -83,7 +101,7 @@ public class EnnemieBehaviour : MonoBehaviour
             {
                 return new Vector3(-1, 0);
             }
-           
+
         }
         if (Random.Range(0, 2) == 0)
         {
@@ -106,7 +124,7 @@ public class EnnemieBehaviour : MonoBehaviour
             {
                 return new Vector3(1, 0);
             }
-           
+
         }
         return new Vector3(0, 0);
 
