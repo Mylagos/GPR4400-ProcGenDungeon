@@ -14,14 +14,19 @@ public class PlayerMovement : MonoBehaviour
     private Vector2Int ymax;
     [SerializeField]
     private Vector2Int xmax;
+    [SerializeField]
+    private float dammages;
     int direction = 0;
     int[] directions = {0, 90, 180, 270};
     bool OnDoor;
+    Vector2 direct;
+    
+    public static int Turn = 0;
 
-    public static bool Turn;
     public static bool IsMooving;
     private void Start()
     {
+        Turn = 0;
         _input = GetComponent<PlayerInput>();
         Map.currentRoom.mapp.Add(transform.position);
       
@@ -68,6 +73,7 @@ public class PlayerMovement : MonoBehaviour
         {
             if (transform.position == Map.doors[i].transform.position && Map.doors[i].activeInHierarchy)
             {
+                
                 Map.move(newdir[i]);
                 transform.position = newpos[i];
                 point.transform.position = newpos[i];
@@ -77,16 +83,40 @@ public class PlayerMovement : MonoBehaviour
         }
         List<string> InputMouvementsNames = new List<string>() {"up", "down", "right","left" };
         int[] tem = { 2, 0, 1,3 };
-        Turn = false;
+        if (Turn > 0)
+        {
+            Turn -= 1;
+        }
+        
         for (int i = 0; i<4 && IsMooving == false;i+=1)
         {
             if (_input.actions[InputMouvementsNames[i]].triggered)
             {
+                direct = newdir[i];
                 Move((Vector2) newdir[i], tem[i]);
                 OnDoor = false;
-                Turn = true;
+                Turn =1;
                 break;
             }
+        }
+        if (_input.actions["Attack"].triggered)
+        {
+            print("attacked");
+            for (int i = 0; i< Map.currentRoom.ennemies.Count; i++)
+            {
+                print((transform.position + (Vector3)direct) + "  : " + Map.currentRoom.ennemies[i].transform.position);
+                if (Map.currentRoom.ennemies[i].transform.GetChild(0).transform.position == transform.position + (Vector3)direct)
+                {
+                    print("hit");
+                    if(Map.currentRoom.ennemies[i].GetComponent<EnnemieBehaviour>().damage(direct, dammages))
+                    {
+                        Map.currentRoom.ennemies.RemoveAt(i);
+                        break;
+                    }
+                    
+                }
+            }
+            Turn = 1;
         }
         transform.position = Vector2.MoveTowards(transform.position, point.transform.position, speed *Time.deltaTime);
        

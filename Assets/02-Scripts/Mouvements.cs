@@ -62,6 +62,15 @@ public partial class @Mouvements : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Attack"",
+                    ""type"": ""Button"",
+                    ""id"": ""3c038a7b-4538-4a28-a46b-1dbbadc1dfda"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -108,6 +117,28 @@ public partial class @Mouvements : IInputActionCollection2, IDisposable
                     ""action"": ""left"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c29a015c-d694-4c40-a6e1-3ad5a76e6100"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e8f93e9a-3392-40f6-87fe-1bd3c5a12de3"",
+                    ""path"": """",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -132,6 +163,7 @@ public partial class @Mouvements : IInputActionCollection2, IDisposable
         m_player_up = m_player.FindAction("up", throwIfNotFound: true);
         m_player_down = m_player.FindAction("down", throwIfNotFound: true);
         m_player_left = m_player.FindAction("left", throwIfNotFound: true);
+        m_player_Attack = m_player.FindAction("Attack", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -195,6 +227,7 @@ public partial class @Mouvements : IInputActionCollection2, IDisposable
     private readonly InputAction m_player_up;
     private readonly InputAction m_player_down;
     private readonly InputAction m_player_left;
+    private readonly InputAction m_player_Attack;
     public struct PlayerActions
     {
         private @Mouvements m_Wrapper;
@@ -203,6 +236,7 @@ public partial class @Mouvements : IInputActionCollection2, IDisposable
         public InputAction @up => m_Wrapper.m_player_up;
         public InputAction @down => m_Wrapper.m_player_down;
         public InputAction @left => m_Wrapper.m_player_left;
+        public InputAction @Attack => m_Wrapper.m_player_Attack;
         public InputActionMap Get() { return m_Wrapper.m_player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -224,6 +258,9 @@ public partial class @Mouvements : IInputActionCollection2, IDisposable
                 @left.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLeft;
                 @left.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLeft;
                 @left.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnLeft;
+                @Attack.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttack;
+                @Attack.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttack;
+                @Attack.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttack;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -240,6 +277,9 @@ public partial class @Mouvements : IInputActionCollection2, IDisposable
                 @left.started += instance.OnLeft;
                 @left.performed += instance.OnLeft;
                 @left.canceled += instance.OnLeft;
+                @Attack.started += instance.OnAttack;
+                @Attack.performed += instance.OnAttack;
+                @Attack.canceled += instance.OnAttack;
             }
         }
     }
@@ -259,5 +299,6 @@ public partial class @Mouvements : IInputActionCollection2, IDisposable
         void OnUp(InputAction.CallbackContext context);
         void OnDown(InputAction.CallbackContext context);
         void OnLeft(InputAction.CallbackContext context);
+        void OnAttack(InputAction.CallbackContext context);
     }
 }

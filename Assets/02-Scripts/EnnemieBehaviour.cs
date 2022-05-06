@@ -10,6 +10,9 @@ public class EnnemieBehaviour : MonoBehaviour
     private GameObject body;
     [SerializeField]
     private float speed;
+    [SerializeField]
+    private float life;
+    bool wait;
     private void Awake()
     {
         print("stare");
@@ -20,10 +23,14 @@ public class EnnemieBehaviour : MonoBehaviour
     }
     private void Update()
     {
-        body.transform.position = Vector2.MoveTowards(body.transform.position, point.transform.position, speed * Time.deltaTime);
-        if (PlayerMovement.Turn)
+        if (life < 0)
         {
-            print("omggg");
+            Map.currentRoom.mapp.Remove(point.transform.position);
+            Destroy(gameObject);
+        }
+        body.transform.position = Vector2.MoveTowards(body.transform.position, point.transform.position, speed * Time.deltaTime);
+        if (PlayerMovement.Turn > 0 && wait == false )
+        {
             var temp = point.transform.position + CheapPathFinding();
             if (!Map.currentRoom.mapp.Contains(temp))
             {
@@ -33,12 +40,28 @@ public class EnnemieBehaviour : MonoBehaviour
             }
            
         }
+        wait = false;
+    }
+    public bool damage(Vector3 recule,float damage)
+    {
+        wait = true;
+        if (!Map.currentRoom.mapp.Contains(point.transform.position + recule))
+        {
+            Map.currentRoom.mapp.Remove(point.transform.position);
+            point.transform.position += recule;
+            Map.currentRoom.mapp.Add(point.transform.position);
+        }
+        life -= damage;
+        if (life < 0)
+        {
+            return true;
+        }
+        return false;
     }
     private Vector3 CheapPathFinding()
     {
         Vector2 his = GameObject.Find("point").transform.position;
         Vector2 mine = point.transform.position;
-        print(his + " : " + mine);
         if (Random.Range(0, 2) == 0)
         {
             if (his.x < mine.x)

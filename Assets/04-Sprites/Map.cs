@@ -33,12 +33,16 @@ public class Map : MonoBehaviour
     private TextMeshPro text;
     [SerializeField]
     private List<GameObject> Ennemies = new List<GameObject>();
+    [SerializeField]
+    private Vector2 minimapPosition;
+    [SerializeField]
+    private GameObject minipmapDady;
 
     //move the player to the direction wanted
     private void Update()
     {
         text.text = map[currentRoomPosition.x][currentRoomPosition.y].name;
-        if (PlayerMovement.Turn)
+        if (PlayerMovement.Turn>0)
         {
             pri(currentRoom.mapp);
         }
@@ -54,6 +58,7 @@ public class Map : MonoBehaviour
     
     void Awake()
     {
+        minipmapDady.transform.position = (Vector2) new Vector2Int(size.x / 2, size.y / 2);
         
         map = new List<List<Room>>();
         doors = new List<GameObject>();
@@ -63,7 +68,6 @@ public class Map : MonoBehaviour
             doors.Add(GameObject.Find(doorsnames[i]));
         }
         currentRoomPosition = new Vector2Int(size.x / 2, size.y / 2);
-        GetComponent<Camera>().orthographicSize = size.x/1.5f;
         for (int i = 0; i < size.x; i++)
         {
             map.Add(new List<Room>());
@@ -84,13 +88,13 @@ public class Map : MonoBehaviour
             map[size.x / 2][size.y / 2].enfants.Add(map[Neightboors[i].x][Neightboors[i].y]);
         }
         //generate the rest with the given parameter
-        gameObject.transform.position =  new Vector3Int(size.x / 2, size.y / 2,-10);
         currentRoom = map[size.x / 2][size.y / 2];
         Generate();
         //Draw it
-        Draw(1, new Color(0,0,0), map[size.x / 2][size.y / 2]);
+        Draw(1, new Color(1,0,0), map[size.x / 2][size.y / 2]);
         currentRoom.setActive(true);
-
+        minipmapDady.transform.position = minimapPosition;
+        minipmapDady.transform.localScale = (Vector2)new Vector2(0.3f, 0.3f);
 
 
     }
@@ -112,31 +116,32 @@ public class Map : MonoBehaviour
         }
         else
         {
-            GameObject temp = GameObject.Instantiate(Cube,(Vector2) First.position, Quaternion.identity);
+            GameObject temp = GameObject.Instantiate(Cube,(Vector2) First.position, Quaternion.identity, minipmapDady.transform);
+            First.MapPiece = temp;
             temp.transform.GetChild(0).transform.GetComponent<TextMeshPro>().text = First.name;
             temp.GetComponent<SpriteRenderer>().color = color;
             Debug.Log(First.enfants.Count);
             if (direction == 0)
             {
-                temp = GameObject.Instantiate(Cube, (Vector2)First.position +new Vector2(0.5f,0), Quaternion.identity);
+                temp = GameObject.Instantiate(Cube, (Vector2)First.position +new Vector2(0.5f,0), Quaternion.identity, minipmapDady.transform);
                 temp.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
                 temp.transform.localScale -= new Vector3(0, 0.25f, 0);
             }
             if (direction == 1)
             {
-                temp = GameObject.Instantiate(Cube, (Vector2)First.position - new Vector2(0.5f, 0), Quaternion.identity);
+                temp = GameObject.Instantiate(Cube, (Vector2)First.position - new Vector2(0.5f, 0), Quaternion.identity, minipmapDady.transform);
                 temp.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
                 temp.transform.localScale -= new Vector3(0, 0.25f, 0);
             }
             if (direction == 2)
             {
-                temp = GameObject.Instantiate(Cube, (Vector2)First.position + new Vector2(0, 0.5f), Quaternion.identity);
+                temp = GameObject.Instantiate(Cube, (Vector2)First.position + new Vector2(0, 0.5f), Quaternion.identity, minipmapDady.transform);
                 temp.GetComponent<SpriteRenderer>().color = new Color(1,1,1);
                 temp.transform.localScale -= new Vector3(0.25f, 0, 0);
             }
             if (direction == 3)
             {
-                temp = GameObject.Instantiate(Cube, (Vector2)First.position - new Vector2(0, 0.5f), Quaternion.identity);
+                temp = GameObject.Instantiate(Cube, (Vector2)First.position - new Vector2(0, 0.5f), Quaternion.identity, minipmapDady.transform);
                 temp.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
                 temp.transform.localScale -= new Vector3(0.25f, 0, 0);
             }
@@ -159,7 +164,14 @@ public class Map : MonoBehaviour
                 {
                     model = 3;
                 }
-                Draw(1, color + new Color((float)1 / RedDisipation, 0, 0), First.enfants[i],model);
+                Draw(1, color + new Color(0, 0, 0), First.enfants[i],model);
+            }
+            if (First.enfants.Count == 0)
+            {
+                if (Random.Range(0, 1) == 0)
+                {
+                    First.setMode(1);
+                }
             }
 
         }
@@ -189,7 +201,6 @@ public class Map : MonoBehaviour
         {
             final += o[i].ToString();
         }
-        print(final);
     }
     void Generate(bool redo = false, int currentRooms = 0)
     {
@@ -314,7 +325,7 @@ public class Map : MonoBehaviour
 public class Room
 {
     public Vector2Int size;
-
+    public GameObject MapPiece;
     public string name = "0";
     public Vector2Int position;
     public Room father;
@@ -322,16 +333,16 @@ public class Room
     public GameObject Tilemap;
     public List<Vector2> mapp = new List<Vector2>();
     public List<GameObject> ennemies = new List<GameObject>();
-
+    public int mode = 0;
     public Room(Vector2Int position, List<GameObject> ennemies, Room father = null, Vector2Int size = default(Vector2Int), GameObject Tilemap = null)
     {
-        
+
         this.position = position;
         this.father = father;
         this.size = size;
         this.Tilemap = Tilemap;
-      
-        for (int i = 0;i<Random.Range(0,4);i++)
+
+        for (int i = 0; i < Random.Range(0, 4); i++)
         {
             var temo = GameObject.Instantiate(ennemies[Random.Range(0, ennemies.Count)], new Vector3(Random.Range(-7, 7), Random.Range(4, -4)), Quaternion.identity);
             temo.SetActive(false);
@@ -339,11 +350,26 @@ public class Room
         }
 
     }
+    public void setMode(int i)
+    {
+        mode = i;
+        for (int j = 0; j < ennemies.Count; j++)
+        {
+            GameObject.Destroy(ennemies[j]);
+        }
+        ennemies.Clear();
+        var temp = GameObject.Instantiate(GameObject.Find("chest"), new Vector3(0, 0, 0), Quaternion.identity);
+        temp.SetActive(false);
+        ennemies.Add(temp);
+        mapp.Add(new Vector3(0, 0, 0));
+    }
+
     public void setActive(bool enable)
     {
 
         if (enable == true)
         {
+            MapPiece.GetComponent<SpriteRenderer>().color = new Color(0, 1, 0);
             for (int i = 0; i < 4; i += 1)
             {
                 Map.doors[i].SetActive(false);
@@ -370,6 +396,12 @@ public class Room
                 }
             }
         }
+        else
+        {
+            MapPiece.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0);
+        }
+
+        
         for(int i = 0; i < ennemies.Count; i++)
         {
             ennemies[i].SetActive(enable);
