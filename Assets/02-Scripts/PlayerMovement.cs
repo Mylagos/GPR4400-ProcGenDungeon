@@ -5,40 +5,60 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
+
+
+    //input
     PlayerInput _input;
-    [SerializeField]
-    private GameObject point;
+
+    //attribute
     [SerializeField]
     private int speed;
-    [SerializeField]
-    private Vector2Int ymax;
-    [SerializeField]
-    private Vector2Int xmax;
     [SerializeField]
     private float dammages;
     [SerializeField]
     private float life;
     private static float currentlife;
+
+    //displacement elements
+    [SerializeField]
+    private GameObject point;
+    [SerializeField]
+    private Vector2Int ymax;
+    [SerializeField]
+    private Vector2Int xmax;
+
+    
+    //personnal temp variables
     int direction = 0;
     int[] directions = {0, 90, 180, 270};
     bool OnDoor;
     Vector2 direct;
 
+    //helpfull variables for other scripts
     public static GameObject player;
     public static Vector2 positiion;
     public static int Turn = 0;
-
     public static bool IsMooving;
+
+
     private void Start()
     {
+        //set the static variable so that other script can access it
         player = gameObject;
         currentlife = life;
         Turn = 0;
+
+        //set the input
         _input = GetComponent<PlayerInput>();
+
+        //add the position of the player as a collision on the map
         Map.currentRoom.mapp.Add(transform.position);
       
     }
-
+    //move take as input a vector for exemple vector(0,1) (move to the top)
+    //and take a direction, if the player is not oriented to this direction,
+    //the player is not moving but simply rotating.
+    //If force is true the direction dosnt matter
     private void Move(Vector3 deplacement, int dir, bool force = false)
     {
         if (dir == direction || force)
@@ -64,6 +84,8 @@ public class PlayerMovement : MonoBehaviour
             transform.eulerAngles = new Vector3(0, 0, directions[dir]);
         }
     }
+    //dammages is the direction were the player will be push after taking the damages
+    //ammount is the amount of damages taken
     public void SetDammages(Vector2 dammages,float ammount)
     {
         Move(dammages,0,true);
@@ -74,9 +96,12 @@ public class PlayerMovement : MonoBehaviour
         }
 
     }
+
     private void Update()
     {
         positiion = transform.position;
+
+        //IsMooving is false if the player is not moving vice versa
         if (transform.position == point.transform.position)
         {
             IsMooving = false;
@@ -85,6 +110,7 @@ public class PlayerMovement : MonoBehaviour
         {
             IsMooving = true;
         }
+
 
         List<Vector3> newpos = new List<Vector3>() { new Vector3(0, -4) , new Vector3(0, 4), new Vector3(-7, 0), new Vector3(7, 0) };
         List<Vector2Int> newdir = new List<Vector2Int>() { new Vector2Int(0, 1), new Vector2Int(0, -1), new Vector2Int(1, 0), new Vector2Int(-1, 0) };
@@ -107,7 +133,7 @@ public class PlayerMovement : MonoBehaviour
         {
             Turn -= 1;
         }
-        //Move
+        //Move if input triggered
         for (int i = 0; i<4 && IsMooving == false;i+=1)
         {
             if (_input.actions[InputMouvementsNames[i]].triggered)
@@ -119,7 +145,7 @@ public class PlayerMovement : MonoBehaviour
                 break;
             }
         }
-        //God Mod
+        //God Mod, instant change room with the arrows
         for (int i = 0; i < 4 && IsMooving == false; i += 1)
         {
             if (_input.actions["god"+i.ToString()].triggered)
@@ -128,7 +154,7 @@ public class PlayerMovement : MonoBehaviour
                 break;
             }
         }
-        //Attack the ennemies in front
+        //Attack the ennemies in front of the player
         if (_input.actions["Attack"].triggered)
         {
             for (int i = 0; i< Map.currentRoom.ennemies.Count; i++)

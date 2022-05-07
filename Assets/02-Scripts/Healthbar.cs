@@ -5,23 +5,21 @@ using UnityEngine.UI;
 
 public class Healthbar : MonoBehaviour
 {
+    //the ennemies to whom the bar is attached
     public GameObject Father;
+    //the color of the bar depending on the health
     public Gradient color;
-    [SerializeField]
-    public bool chid = false;
-    // Start is called before the first frame update
-    void Awake()
-    {
+    //if it is a copy
+    public bool child = false;
 
-    }
 
-    // Update is called once per frame
     void Update()
     {
         try
         {
-            if (chid)
+            if (child)
             {
+                //follow the ennemies and adjust it value and color dependin on its health
                 transform.position = Father.transform.GetChild(1).transform.position - new Vector3(0, 1);
                 var temp = Father.GetComponent<EnnemieBehaviour>();
                 GetComponent<Slider>().value = (float)(temp.currentLife / temp.life);

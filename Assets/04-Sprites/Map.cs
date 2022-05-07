@@ -5,72 +5,80 @@ using UnityEngine;
 
 public class Map : MonoBehaviour
 {
-    // Start is called before the first frame update
+    //the map
     static List<List<Room>> map = new List<List<Room>>();
-    public static List<GameObject> doors = new List<GameObject>();
-    public static Vector2Int currentRoomPosition;
-    [SerializeField]
+    //the doors as game object
+    public static List<GameObject> doors = new List<GameObject>();    
+    //keep track of the current room so every script can access it
     public static Room currentRoom;
-
+    //amount of rooms wanted
     [SerializeField]
     private int rooms;
+    //the cube that is copy paste to make the minimap
     [SerializeField]
     private GameObject Cube;
+    //the chances of getting 0, 1, 2 or 3 rooms at each node
     [SerializeField]
     private List<int> MainChance = new List<int>();
+    //the rate at wich the chances deacrease
     [SerializeField]
     private float rate;
+    //the amount of iteration that produce the map
     [SerializeField]
     private int iterations;
+    //the size of the map
     [SerializeField]
     private Vector2Int size;
-    [SerializeField]
-    private int RedDisipation;
     //force the amount of room wanted to be in the map
     [SerializeField]
     private bool IWantThoseRooms;
+    //the text of different uses
     [SerializeField]
     private TextMeshPro text;
+    //the ennemies of the level
     [SerializeField]
     private List<GameObject> Ennemies = new List<GameObject>();
+    //the minipa position 
     [SerializeField]
     private Vector2 minimapPosition;
+    //the parrent of the minimap cubes
     [SerializeField]
     private GameObject minipmapDady;
+    //the amount of room we want of each type, x = type y = amount
+    //in order of priority, the last one might not be in the donjon
+    //apply only on node with no childs
+    // 0 = chess room, 1 = ...
     [SerializeField]
     private List<Vector2Int> RoomsTypes;
-    int tries = 100;
-
+    //keep track of rooms with no childs
     private List<Room> EndRooms = new List<Room>();
-
-
-    private void Update()
-    {
-        text.text = map[currentRoomPosition.x][currentRoomPosition.y].name;
-    }
-    //move the player to the direction wanted
+    //not used anymore :(
+    private int RedDisipation;
+    //move the player to the room wanted new position being a direction vector
     public static void move(Vector2Int newPosition)
     {
-        if (map[(currentRoomPosition + newPosition).x][(currentRoomPosition + newPosition).y] != null)
+        if (map[(currentRoom.position + newPosition).x][(currentRoom.position + newPosition).y] != null)
         {
             currentRoom.setActive(false);
-            currentRoomPosition = currentRoomPosition + newPosition;
-            currentRoom = map[currentRoomPosition.x][currentRoomPosition.y];
+            currentRoom.position = currentRoom.position + newPosition;
+            currentRoom = map[currentRoom.position.x][currentRoom.position.y];
             currentRoom.setActive(true);
         }
     }
+
     void Awake()
     {
-        minipmapDady.transform.position = (Vector2)new Vector2Int(size.x / 2, size.y / 2);
-
+        
+        //reset static variables
         map = new List<List<Room>>();
         doors = new List<GameObject>();
+        //get the door as static object so every script can take then from here
         List<string> doorsnames = new List<string>() { "Door", "Door1", "Door2", "Door3" };
         for (int i = 0; i < 4; i += 1)
         {
             doors.Add(GameObject.Find(doorsnames[i]));
         }
-        currentRoomPosition = new Vector2Int(size.x / 2, size.y / 2);
+        //generate the map 2d array
         for (int i = 0; i < size.x; i++)
         {
             map.Add(new List<Room>());
@@ -89,23 +97,26 @@ public class Map : MonoBehaviour
             map[Neightboors[i].x][Neightboors[i].y].name = al[Random.Range(0, al.Length)].ToString();
             map[size.x / 2][size.y / 2].enfants.Add(map[Neightboors[i].x][Neightboors[i].y]);
         }
-        //generate the rest with the given parameter
+        //set the position of the minimap parrent to fit with the center of the minimap
+        minipmapDady.transform.position = (Vector2)new Vector2Int(size.x / 2, size.y / 2);
         currentRoom = map[size.x / 2][size.y / 2];
+        //generate the map with the given parameter
         Generate();
-        //Draw it
-        Draw(1, new Color(1, 0, 0), map[size.x / 2][size.y / 2]);
+        //Draw it for the mini map
+        Draw(map[size.x / 2][size.y / 2]);
+        //set the current room as active
         currentRoom.setActive(true);
+        //reposition the minimap
         minipmapDady.transform.position = minimapPosition;
         minipmapDady.transform.localScale = (Vector2)new Vector2(0.3f, 0.3f);
 
         SetEndRooms(RoomsTypes);
     }
-    //Dessine la map pour donner un aperçue (recurcif)
+    //Set the end room with the RoomTypes parametres
     private void SetEndRooms(List<Vector2Int> RoomTypes)
     {
         while (true)
         {
-
             if (RoomTypes[0].y < 1)
             {
                 RoomTypes.RemoveAt(0);
@@ -121,106 +132,61 @@ public class Map : MonoBehaviour
         }
     }
     //Dwaw the minimap
-    void Draw(int mode, Color color, Room First = null, int direction = 0)
+    void Draw(Room First, int direction = 0)
     {
-        if (mode == 0)
+        //generate the cube and the branches
+        GameObject temp = GameObject.Instantiate(Cube, (Vector2)First.position, Quaternion.identity, minipmapDady.transform);
+        First.MapPiece = temp;
+        temp.GetComponent<SpriteRenderer>().color = new Color(1,0,0);
+        Vector2[] pos = { new Vector2(0.5f, 0), new Vector2(-0.5f, 0), new Vector2(0, 0.5f),  new Vector2(0, -0.5f) };
+        Vector3[] newsize = { new Vector3(0, 0.25f, 0), new Vector3(0, 0.25f, 0), new Vector3(0.25f, 0, 0), new Vector3(0.25f, 0, 0) };
+        for (int i = 0; i < 4; i++)
         {
-            for (int i = 0; i < 11; i++)
+            if (direction == i)
             {
-                for (int k = 0; k < 11; k++)
-                {
-                    if (map[i][k] != null)
-                    {
-                        GameObject temp = GameObject.Instantiate(Cube, (Vector2)map[i][k].position, Quaternion.identity);
-                    }
-                }
+                temp = GameObject.Instantiate(Cube, (Vector2)First.position + pos[i], Quaternion.identity, minipmapDady.transform);
+                temp.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
+                temp.transform.localScale -= newsize[i];
             }
         }
-        else
+        //generate the rooms next to the current room recurcivly
+        for (int i = 0; i < First.enfants.Count; i++)
         {
-            GameObject temp = GameObject.Instantiate(Cube, (Vector2)First.position, Quaternion.identity, minipmapDady.transform);
-            First.MapPiece = temp;
-            temp.GetComponent<SpriteRenderer>().color = color;
-            if (direction == 0)
+            int model = 0;
+            if (First.enfants[i].position.x + 1 == First.position.x)
             {
-                temp = GameObject.Instantiate(Cube, (Vector2)First.position + new Vector2(0.5f, 0), Quaternion.identity, minipmapDady.transform);
-                temp.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
-                temp.transform.localScale -= new Vector3(0, 0.25f, 0);
+                model = 0;
             }
-            if (direction == 1)
+            if (First.enfants[i].position.x - 1 == First.position.x)
             {
-                temp = GameObject.Instantiate(Cube, (Vector2)First.position - new Vector2(0.5f, 0), Quaternion.identity, minipmapDady.transform);
-                temp.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
-                temp.transform.localScale -= new Vector3(0, 0.25f, 0);
+                model = 1;
             }
-            if (direction == 2)
+            if (First.enfants[i].position.y + 1 == First.position.y)
             {
-                temp = GameObject.Instantiate(Cube, (Vector2)First.position + new Vector2(0, 0.5f), Quaternion.identity, minipmapDady.transform);
-                temp.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
-                temp.transform.localScale -= new Vector3(0.25f, 0, 0);
+                model = 2;
             }
-            if (direction == 3)
+            if (First.enfants[i].position.y - 1 == First.position.y)
             {
-                temp = GameObject.Instantiate(Cube, (Vector2)First.position - new Vector2(0, 0.5f), Quaternion.identity, minipmapDady.transform);
-                temp.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
-                temp.transform.localScale -= new Vector3(0.25f, 0, 0);
+                model = 3;
             }
-            for (int i = 0; i < First.enfants.Count; i++)
-            {
-                int model = 0;
-                if (First.enfants[i].position.x + 1 == First.position.x)
-                {
-                    model = 0;
-                }
-                if (First.enfants[i].position.x - 1 == First.position.x)
-                {
-                    model = 1;
-                }
-                if (First.enfants[i].position.y + 1 == First.position.y)
-                {
-                    model = 2;
-                }
-                if (First.enfants[i].position.y - 1 == First.position.y)
-                {
-                    model = 3;
-                }
-                Draw(1, color + new Color(0, 0, 0), First.enfants[i], model);
-            }
-
-
+            Draw(First.enfants[i], model);
         }
 
     }
-    //generate the map
-    Room RandomChild()
-    {
-        Room temp = map[size.x / 2][size.y / 2];
-        while (true)
-        {
-            try
-            {
-                temp = temp.enfants[Random.Range(0, temp.enfants.Count)];
-            }
-            catch { break; }
-
-        }
-        return temp;
-    }
+   
     //generate the maps using the parameters given
-
     void Generate(bool redo = false, int currentRooms = 0)
     {
         string al = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
         //set the current population and the childs
         List<Room> current = new List<Room>() { map[size.x / 2][size.x / 2 + 1], map[size.x / 2][size.x / 2 - 1], map[size.x / 2 - 1][size.x / 2], map[size.x / 2 + 1][size.x / 2] };
         List<Room> child = new List<Room>();
-        //we add a random child her to avoid max depth recursion when using the IWantThoseRooms function
+        //we add a random child from the EndRooms here to avoid max depth recursion when using the IWantThoseRooms function
         if (redo)
         {
             current.Clear();
             for (int i = 0; i < 3; i++)
             {
-
                 try
                 {
                     var temp = Random.Range(0, EndRooms.Count);
@@ -293,7 +259,6 @@ public class Map : MonoBehaviour
             }
         }
         //if IWantThoseRooms and the amount of rooms wanted is not check, we redo the process until it works
-        tries -= 1;
         print(EndRooms.Count);
         if (IWantThoseRooms && rooms > currentRooms)
         {
@@ -327,7 +292,7 @@ public class Map : MonoBehaviour
         return clo;
 
     }
-    //check la disponibilité
+    //check la disponibilité des salles allentours
     List<Vector2Int> availables(Vector2Int pos)
     {
 
@@ -347,7 +312,8 @@ public class Map : MonoBehaviour
         }
         return paths;
     }
-    public void Listprint(List<int> all)
+
+    void Listprint(List<int> all)
     {
 
         string final = "";
