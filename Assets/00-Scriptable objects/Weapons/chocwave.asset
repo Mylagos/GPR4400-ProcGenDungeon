@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35e9389142f78487ba7207fe4da26e69, type: 3}
+  m_Name: chocwave
+  m_EditorClassIdentifier: 
+  frames: 6
+  Dammage: {x: 5, y: 33}
+  mapDammage: {fileID: 2613896999655755105, guid: 871aad9dc8a7744eda97602f2c436702, type: 3}

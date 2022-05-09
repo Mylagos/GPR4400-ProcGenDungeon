@@ -6,8 +6,10 @@ using UnityEngine;
 public class Level : ScriptableObject
 {
     public int Rooms;
-    public Vector2 Size;
+    public Vector2Int size;
+    public List<Ennemie> ennemies;
     public List<RoomsBackgrounds> backgrounds;
-    public List<Vector2> RoomTypes;
+    public List<Vector2Int> RoomTypes;
+    public Vector2Int ennemiesAmmount;
 
 }

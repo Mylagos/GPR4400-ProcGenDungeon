@@ -14,11 +14,10 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private int speed;
     [SerializeField]
-    private float dammages;
-    [SerializeField]
     private float life;
     private static float currentlife;
 
+    public WeaponBehaviour arm;
     //displacement elements
     [SerializeField]
     private GameObject point;
@@ -43,6 +42,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
+        arm = GetComponent<WeaponBehaviour>();
         //set the static variable so that other script can access it
         player = gameObject;
         currentlife = life;
@@ -69,7 +69,6 @@ public class PlayerMovement : MonoBehaviour
                 if(temp.y > ymax.x && temp.y < ymax.y && temp.x > xmax.x && temp.x < xmax.y){
                     if (!Map.currentRoom.mapp.Contains(point.transform.position + deplacement))
                     {
-                        print("auhsdiauh");
                         OnDoor = false;
                         Map.currentRoom.mapp.Remove(transform.position);
                         point.transform.position += deplacement;
@@ -157,18 +156,7 @@ public class PlayerMovement : MonoBehaviour
         //Attack the ennemies in front of the player
         if (_input.actions["Attack"].triggered)
         {
-            for (int i = 0; i< Map.currentRoom.ennemies.Count; i++)
-            {
-                print((transform.position + (Vector3)direct) + "  : " + Map.currentRoom.ennemies[i].transform.position);
-                if (Map.currentRoom.ennemies[i].transform.GetChild(0).transform.position == transform.position + (Vector3)direct)
-                {
-                    if(Map.currentRoom.ennemies[i].GetComponent<EnnemieBehaviour>().SetDammages(direct, dammages))
-                    {
-                        Map.currentRoom.ennemies.RemoveAt(i);
-                        break;
-                    }
-                }
-            }
+            arm.setAttack(tem[direction]);
             Turn = 1;
         }
         transform.position = Vector2.MoveTowards(transform.position, point.transform.position, speed *Time.deltaTime);

@@ -15,8 +15,10 @@ public class Healthbar : MonoBehaviour
 
     void Update()
     {
+        gameObject.SetActive(Father.activeSelf);
         try
         {
+            
             if (child)
             {
                 //follow the ennemies and adjust it value and color dependin on its health
@@ -28,7 +30,7 @@ public class Healthbar : MonoBehaviour
            
         }
         catch {
-            gameObject.SetActive(false);
+           
         }
        
 

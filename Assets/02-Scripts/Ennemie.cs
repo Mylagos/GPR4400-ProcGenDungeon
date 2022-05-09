@@ -5,6 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Ennemie", menuName = "ScriptableObjects/Ennemie")]
 public class Ennemie : ScriptableObject
 {
+    public GameObject me;
     public Sprite sprite;
     public Animator animation;
     public Weapon weapon;
