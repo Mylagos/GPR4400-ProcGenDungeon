@@ -35,9 +35,8 @@ public class WeaponBehaviour : MonoBehaviour
                     print(localPlace);
                     var name = me.mapDammage.GetTile(localPlace).name;
                     if (me.mapDammage.GetTile(localPlace).name != "CENTER")
-                        {
+                    {
                         var number = int.Parse(name);
-                        print(number);
                         //droite
                         posibilities[0][number].Add((Vector2Int)localPlace);
                         //gauche
@@ -51,11 +50,11 @@ public class WeaponBehaviour : MonoBehaviour
                 }
             }
         }
-        
+
     }
     public void setAttack(int pos)
     {
-        currentAttacks.Add(new Attack(posibilities[pos], transform.position,me.Dammage.x,WhoDammage));
+        currentAttacks.Add(new Attack(posibilities[pos], transform.position,me,WhoDammage));
     }
     public void Update()
     {
@@ -73,8 +72,6 @@ public class WeaponBehaviour : MonoBehaviour
             
             
         }
-
-
 
     }
 

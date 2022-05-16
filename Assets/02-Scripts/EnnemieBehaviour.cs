@@ -21,6 +21,9 @@ public class EnnemieBehaviour : MonoBehaviour
     public float currentLife;
     bool wait;
     public GameObject healthbar;
+
+    public Ennemie ennemie;
+    public WeaponBehaviour arm;
     private void Awake()
     {
         currentLife = life;
@@ -40,7 +43,7 @@ public class EnnemieBehaviour : MonoBehaviour
         //die
         if (currentLife < 0)
         {
-            Map.currentRoom.mapp.Remove(point.transform.position);
+            Map.currentRoom.map[conv(point.transform.position)].block = false;
             Map.currentRoom.ennemies.Remove(gameObject);
             Destroy(gameObject);
             Destroy(healthbar);
@@ -53,37 +56,49 @@ public class EnnemieBehaviour : MonoBehaviour
         if (PlayerMovement.Turn > 0 && wait == false)
         {
             var vect = new Vector2Int((int)point.transform.position.x, (int)point.transform.position.y);
-            if (Map.currentRoom.dammages.ContainsKey(vect))
+            var hit = false;
+            for (int i = 0; i< Map.currentRoom.map[vect].attacks.Count; i++)
             {
-                var attack = Map.currentRoom.dammages[vect];
-                if (attack.whom == 0)
+                if  (Map.currentRoom.map[vect].attacks[i].whom == 0)
                 {
-                    SetDammages(attack.initialPosition, attack.dammage);
+                    var attack = Map.currentRoom.map[vect].attacks[i];
                     
+                    SetDammages(attack.initialPosition, attack.weapon.Dammage.x);
+                    hit = true;
+
                 }
-               
             }
-            else
+           
+            if(!hit)
             {
                 //get the CheapPathFinding and if nothing blocks it it go there, if the player block it it will dammage him
                 var cheap = CheapPathFinding();
-                var temp = (Vector2)point.transform.position + cheap;
-                if (!Map.currentRoom.mapp.Contains(temp))
+                var temp = conv((Vector2)point.transform.position + cheap);
+                print(Map.currentRoom.map.ContainsKey(temp));
+                if (!Map.currentRoom.map[temp].block)
                 {
-                    Map.currentRoom.mapp.Remove(point.transform.position);
+
+                   
+                    Map.currentRoom.map[conv(point.transform.position)].block = false;
                     point.transform.position = temp;
-                    Map.currentRoom.mapp.Add(point.transform.position);
+                    Map.currentRoom.map[conv(point.transform.position)].block = true;
+                   
                 }
-                else if (temp == PlayerMovement.positiion)
+                else
                 {
-                    PlayerMovement.player.GetComponent<PlayerMovement>().SetDammages(cheap, damage);
+                    //arm.setAttack(0);
                 }
             }
+           
 
            
 
         }
         wait = false;
+    }
+    Vector2 conv(Vector2 bas)
+    {
+        return new Vector2Int((int)bas.x, (int)bas.y);
     }
     //set the damges
     public void SetDammages(Vector2 recule, float damage)
@@ -91,7 +106,7 @@ public class EnnemieBehaviour : MonoBehaviour
         healthbar.SetActive(true);
         currentLife-=damage;
         wait = true;
-        if(!Map.currentRoom.mapp.Contains((Vector2)point.transform.position + recule))
+        if(!Map.currentRoom.map[conv((Vector2)point.transform.position + recule)].block)
         {
             var vect = new Vector3();
             if (recule.x == 0)
@@ -105,9 +120,9 @@ public class EnnemieBehaviour : MonoBehaviour
             {
                  vect = new Vector3(Mathf.Abs(recule.x) / recule.x, Mathf.Abs(recule.y) / recule.y);
             }
-            Map.currentRoom.mapp.Remove(point.transform.position);
+            Map.currentRoom.map[(Vector2)point.transform.position].block = false;
             point.transform.position += vect;
-            Map.currentRoom.mapp.Add(point.transform.position);
+            Map.currentRoom.map[(Vector2)point.transform.position].block = true;
         }
 
     }

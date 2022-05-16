@@ -20,7 +20,7 @@ public class Map : MonoBehaviour
     // 0 = chess room, 1 = ...
     public Level currentLevel;
     public static Level currentlevel;
-
+    public GameObject currentRoomObject = null;
     //the cube that is copy paste to make the minimap
     [SerializeField]
     private GameObject Cube;
@@ -47,24 +47,44 @@ public class Map : MonoBehaviour
     //the parrent of the minimap cubes
     [SerializeField]
     private GameObject minipmapDady;
-
+    public GameObject background;
 
     //keep track of rooms with no childs
     private List<Room> EndRooms = new List<Room>();
     //not used anymore :(
     private int RedDisipation;
     //move the player to the room wanted new position being a direction vector
-    public static void move(Vector2Int newPosition)
+    public void move(Vector2Int newPosition,Vector2 player)
     {
+        
         if (map[(currentRoom.position + newPosition).x][(currentRoom.position + newPosition).y] != null)
         {
-            currentRoom.setActive(false);
-
-            currentRoom = map[currentRoom.position.x + newPosition.x][currentRoom.position.y + newPosition.y];
-            currentRoom.setActive(true);
+            StartCoroutine(moove(newPosition, player));
         }
     }
-
+    IEnumerator moove(Vector2Int finalpos,Vector2 player)
+    {
+        var temp = map[currentRoom.position.x + (int)finalpos.x][currentRoom.position.y + (int)finalpos.y];
+        //temp.setActive(true);
+        Dictionary<Vector2Int, Vector3> pos = new Dictionary<Vector2Int, Vector3>();
+        pos.Add(new Vector2Int(0, 1), new Vector3(0, 13,-10));
+        pos.Add(new Vector2Int(0, -1), new Vector3(0, -13, -10));
+        pos.Add(new Vector2Int(1, 0), new Vector3(13, 0, -10));
+        pos.Add(new Vector2Int(-1, 0), new Vector3(-13, 0, -10));
+        temp.background.transform.position = (Vector2)pos[finalpos];
+        temp.setActive(true);
+        while (gameObject.transform.position != pos[finalpos])
+        {
+            gameObject.transform.position = Vector3.MoveTowards(gameObject.transform.position, pos[finalpos], 15 * Time.deltaTime);
+            yield return new WaitForEndOfFrame();
+        }
+        PlayerMovement.player.transform.position = player;
+        PlayerMovement.points.transform.position = player;
+        currentRoom.setActive(false);
+        gameObject.transform.position = new Vector3(0, 0, -10);
+        temp.background.transform.position = new Vector3(0, 0);
+        currentRoom = temp;
+    }
     void Awake()
     {
         currentlevel = currentLevel;
@@ -87,12 +107,12 @@ public class Map : MonoBehaviour
             }
         }
         //generate the five mains rooms
-        map[currentLevel.size.x / 2][currentLevel.size.y / 2] = new Room(new Vector2Int(currentLevel.size.x / 2, currentLevel.size.y / 2), currentLevel.ennemies);
+        map[currentLevel.size.x / 2][currentLevel.size.y / 2] = new Room(new Vector2Int(currentLevel.size.x / 2, currentLevel.size.y / 2), currentLevel.ennemies,background);
         List<Vector2Int> Neightboors = new List<Vector2Int>() { new Vector2Int(currentLevel.size.x / 2, currentLevel.size.x / 2 + 1), new Vector2Int(currentLevel.size.x / 2 + 1, currentLevel.size.x / 2), new Vector2Int(currentLevel.size.x / 2, currentLevel.size.x / 2 - 1), new Vector2Int(currentLevel.size.x / 2 - 1, currentLevel.size.x / 2) };
         for (int i = 0; i < 4; i++)
         {
             string al = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            map[Neightboors[i].x][Neightboors[i].y] = new Room(Neightboors[i], currentLevel.ennemies, map[currentLevel.size.x / 2][currentLevel.size.y / 2]);
+            map[Neightboors[i].x][Neightboors[i].y] = new Room(Neightboors[i], currentLevel.ennemies, background, map[currentLevel.size.x / 2][currentLevel.size.y / 2]);
             map[Neightboors[i].x][Neightboors[i].y].name = al[Random.Range(0, al.Length)].ToString();
             map[currentLevel.size.x / 2][currentLevel.size.y / 2].enfants.Add(map[Neightboors[i].x][Neightboors[i].y]);
         }
@@ -108,7 +128,6 @@ public class Map : MonoBehaviour
         //reposition the minimap
         minipmapDady.transform.position = minimapPosition;
         minipmapDady.transform.localScale = (Vector2)new Vector2(0.3f, 0.3f);
-
         SetEndRooms(currentLevel.RoomTypes);
     }
     //Set the end room with the RoomTypes parametres
@@ -116,7 +135,6 @@ public class Map : MonoBehaviour
     {
         while (true)
         {
-            
                 try
                 {
                     if (RoomTypes[0].y < 1)
@@ -231,7 +249,7 @@ public class Map : MonoBehaviour
                     //we take a random path
                     Vector2Int ran = paths[Random.Range(0, paths.Count)];
                     //we create a new room at this position
-                    Room temp = new Room(ran, currentLevel.ennemies, current[0]);
+                    Room temp = new Room(ran, currentLevel.ennemies, background,current[0]);
                     temp.name = al[Random.Range(0, al.Length)].ToString();
                     //we add the new room to the map and as the current room's child
                     current[0].enfants.Add(temp);
@@ -376,32 +394,80 @@ public class Room
     public Vector2Int position;
     public Room father;
     public List<Room> enfants = new List<Room>();
-    public GameObject Tilemap;
-    public List<Vector2> mapp = new List<Vector2>();
+
+    //public List<Vector2> mapp = new List<Vector2>();
+
     public List<GameObject> ennemies = new List<GameObject>();
     public int mode = 0;
+    //public Dictionary<Vector2, Attack> dammages = new Dictionary<Vector2, Attack>();
 
+    public Dictionary<Vector2,Tile> map = new Dictionary<Vector2, Tile>();
 
+    public GameObject background;
 
-    public Dictionary<Vector2, Attack> dammages = new Dictionary<Vector2, Attack>();
-    public Room(Vector2Int position, List<Ennemie> ennemies, Room father = null, Vector2Int size = default(Vector2Int), GameObject Tilemap = null)
+    public Room(Vector2Int position, List<Ennemie> ennemies, GameObject background, Room father = null, Vector2Int size = default(Vector2Int))
     {
 
         this.position = position;
         this.father = father;
         this.size = size;
-        this.Tilemap = Tilemap;
 
+       
+        var vect1 = new Vector2(-8, 5);
+        for (int i = 0; i < 17; i++)
+        {
+            for (int k = 0; k < 11; k++)
+            {
+                map.Add(vect1, new Tile());
+                vect1.x += 1;
+                if (vect1.x == 9)
+                {
+                    vect1.x = -8;
+                    vect1.y -= 1;
+                }
+            }
+        }
+        this.background = GameObject.Instantiate(background);
+        background.SetActive(false);
         for (int i = 0; i < Random.Range(Map.currentlevel.ennemiesAmmount.x, Map.currentlevel.ennemiesAmmount.y); i++)
         {
             var vect = new Vector3(Random.Range(-7, 7), Random.Range(4, -4));
             var temo = GameObject.Instantiate(ennemies[Random.Range(0, ennemies.Count)].me, vect, Quaternion.identity);
-            temo.SetActive(false);
+            temo.transform.parent = this.background.transform;
+            //temo.SetActive(false);
             this.ennemies.Add(temo);
-            mapp.Add(vect);
+            map[vect].block = true;
+
         }
     }
-    //set the mode of the room : 0 = chessroom, 1 = ... 
+    //return a colision map for ennemies
+    public Dictionary<Vector2, int> AstarMap()
+    {
+        Dictionary<Vector2, int> pos = new Dictionary<Vector2, int>();
+        var vect1 = new Vector2(-8, 5);
+        for(int i  = 0; i < 16;i++)
+        {
+            for (int k = 0; k < 10; k++)
+            {
+                if (map[vect1].block || map[vect1].ennemiesamo)
+                {
+                    pos.Add(vect1, 1);
+                }
+                else
+                {
+                    pos.Add(vect1, 0);
+                }
+                vect1.x += 1;
+                if (vect1.x == 9)
+                {
+                    vect1.x = -8;
+                    vect1.y -= 1;
+                }
+            }
+        }
+        return pos;
+    }
+    //set the mode of the room : 0 = chessroom, 1 = ...
     public void setMode(int i)
     {
         mode = i;
@@ -416,7 +482,7 @@ public class Room
             var temp = GameObject.Instantiate(GameObject.Find("chest"), new Vector3(0, 0, 0), Quaternion.identity);
             temp.SetActive(false);
             ennemies.Add(temp);
-            mapp.Add(new Vector3(0, 0, 0));
+            map[new Vector2(0, 0)].block = true;
         }
 
     }
@@ -450,7 +516,8 @@ public class Room
                     }
                 }
                 catch
-                { //print(map[currentRoom.x][currentRoom.y].father);
+                {
+                    //print(map[currentRoom.x][currentRoom.y].father);
                 }
             }
         }
@@ -458,12 +525,18 @@ public class Room
         {
             MapPiece.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0);
         }
-
-
-        for (int i = 0; i < ennemies.Count; i++)
-        {
-            ennemies[i].SetActive(enable);
-        }
+        background.SetActive(enable);
+        //for (int i = 0; i < ennemies.Count; i++)
+        //{
+        //    ennemies[i].SetActive(enable);
+        //}
 
     }
+}
+public class Tile 
+{
+    public Vector2 position;
+    public List<Attack> attacks = new List<Attack>();
+    public bool block;
+    public bool ennemiesamo;
 }

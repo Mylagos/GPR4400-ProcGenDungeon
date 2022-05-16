@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Level
   m_EditorClassIdentifier: 
   Rooms: 13
-  size: {x: 20, y: 20}
+  size: {x: 20, y: 21}
   ennemies:
   - {fileID: 11400000, guid: 4fb6886f9f938441faed16e91e5c82fa, type: 2}
   - {fileID: 11400000, guid: cd75f6f3175d24ae48c59bec64b50861, type: 2}
