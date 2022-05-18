@@ -72,10 +72,8 @@ public class PlayerMovement : MonoBehaviour
                     if (!Map.currentRoom.map[point.transform.position + deplacement].block)
                     {
                         OnDoor = false;
-                        print(point.transform.position);
                         Map.currentRoom.map[point.transform.position].block = false;
                         point.transform.position += deplacement;
-                        print(transform.position);
                         Map.currentRoom.map[point.transform.position].block = true;
                         if (!force)
                         {
@@ -175,7 +173,7 @@ public class PlayerMovement : MonoBehaviour
         {
             if (_input.actions["god"+i.ToString()].triggered)
             {
-                GameObject.Find("Main Camera").transform.GetComponent<Map>().move(newdir[i],newpos[i]);
+                GameObject.Find("Main Camera").transform.GetComponent<Map>().move(newdir[i]);
                 break;
             }
         }

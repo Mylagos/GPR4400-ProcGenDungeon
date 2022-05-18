@@ -54,7 +54,7 @@ public class Map : MonoBehaviour
     //not used anymore :(
     private int RedDisipation;
     //move the player to the room wanted new position being a direction vector
-    public void move(Vector2Int newPosition,Vector2 player)
+    public void move(Vector2Int newPosition,Vector2 player = default(Vector2))
     {
         
         if (map[(currentRoom.position + newPosition).x][(currentRoom.position + newPosition).y] != null)
@@ -62,15 +62,16 @@ public class Map : MonoBehaviour
             StartCoroutine(moove(newPosition, player));
         }
     }
+    //animated 
     IEnumerator moove(Vector2Int finalpos,Vector2 player)
     {
         var temp = map[currentRoom.position.x + (int)finalpos.x][currentRoom.position.y + (int)finalpos.y];
         //temp.setActive(true);
         Dictionary<Vector2Int, Vector3> pos = new Dictionary<Vector2Int, Vector3>();
-        pos.Add(new Vector2Int(0, 1), new Vector3(0, 13,-10));
-        pos.Add(new Vector2Int(0, -1), new Vector3(0, -13, -10));
-        pos.Add(new Vector2Int(1, 0), new Vector3(13, 0, -10));
-        pos.Add(new Vector2Int(-1, 0), new Vector3(-13, 0, -10));
+        pos.Add(new Vector2Int(0, 1), new Vector3(0, 8,-10));
+        pos.Add(new Vector2Int(0, -1), new Vector3(0, -8, -10));
+        pos.Add(new Vector2Int(1, 0), new Vector3(14, 0, -10));
+        pos.Add(new Vector2Int(-1, 0), new Vector3(-14, 0, -10));
         temp.background.transform.position = (Vector2)pos[finalpos];
         temp.setActive(true);
         while (gameObject.transform.position != pos[finalpos])
@@ -441,21 +442,22 @@ public class Room
         }
     }
     //return a colision map for ennemies
-    public Dictionary<Vector2, int> AstarMap()
+    public List<List<Vector3>> AstarMap()
     {
-        Dictionary<Vector2, int> pos = new Dictionary<Vector2, int>();
+        List<List<Vector3>> pos = new List<List<Vector3>>();
         var vect1 = new Vector2(-8, 5);
         for(int i  = 0; i < 16;i++)
         {
+            pos.Add(new List<Vector3>());
             for (int k = 0; k < 10; k++)
             {
                 if (map[vect1].block || map[vect1].ennemiesamo)
                 {
-                    pos.Add(vect1, 1);
+                    pos[i].Add(new Vector3(vect1.x, vect1.y,1));
                 }
                 else
                 {
-                    pos.Add(vect1, 0);
+                    pos[i].Add(new Vector3(vect1.x, vect1.y, 0));
                 }
                 vect1.x += 1;
                 if (vect1.x == 9)

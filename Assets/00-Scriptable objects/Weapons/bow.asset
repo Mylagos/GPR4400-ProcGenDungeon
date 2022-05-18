@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35e9389142f78487ba7207fe4da26e69, type: 3}
   m_Name: bow
   m_EditorClassIdentifier: 
-  sprite: {fileID: 21300000, guid: 79d68942ca62c4781a65956bb6cefd3b, type: 3}
+  sprite: {fileID: 21300000, guid: c06293f5ffb9a4ab28b7b19851f126df, type: 3}
   frames: 6
   Dammage: {x: 8, y: 2}
-  mapDammage: {fileID: 8263482693375485442, guid: 9014c0cea77924ebead328659a834b8a, type: 3}
+  mapDammage: {fileID: 5691779113294217316, guid: b42b95294a478488aa9decb317cd59fe, type: 3}

@@ -12,6 +12,7 @@ public class WeaponBehaviour : MonoBehaviour
     List<Vector2Int> used = new List<Vector2Int>();
     List<GameObject> anim = new List<GameObject>();
     List<Attack> currentAttacks = new List<Attack>();
+    public GameObject thisGameobject;
     //0 == player, 1== ennemies, 2 == tt le monde
     public int WhoDammage;
     public void Start()
@@ -32,7 +33,6 @@ public class WeaponBehaviour : MonoBehaviour
                 Vector3 place = me.mapDammage.CellToWorld(localPlace); 
                 if (me.mapDammage.HasTile(localPlace))
                 {
-                    print(localPlace);
                     var name = me.mapDammage.GetTile(localPlace).name;
                     if (me.mapDammage.GetTile(localPlace).name != "CENTER")
                     {
@@ -54,6 +54,7 @@ public class WeaponBehaviour : MonoBehaviour
     }
     public void setAttack(int pos)
     {
+        print(currentAttacks.Count);
         currentAttacks.Add(new Attack(posibilities[pos], transform.position,me,WhoDammage));
     }
     public void Update()
