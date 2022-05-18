@@ -133,10 +133,10 @@ public class EnnemieBehaviour : MonoBehaviour
                     //var past = pasta.Bestpasta(closest, body.transform.position);
                     //TO DO : var past = astart(PlayerMovement.points.transform.position, body.transform.position);
                     var past = CheapPathFinding();
-                    if (!Map.currentRoom.map[kofl.vectorInt(past)].block)
+                    if (!Map.currentRoom.map[kofl.vectorInt(point.transform.position + (Vector3)past)].block)
                     {
                         Map.currentRoom.map[kofl.vectorInt(point.transform.position)].block = false;
-                        point.transform.position = past;
+                        point.transform.position += (Vector3)past;
                         Map.currentRoom.map[kofl.vectorInt(point.transform.position)].block = true;
                     }
                 }
