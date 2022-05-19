@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: Goblin 1
   m_EditorClassIdentifier: 
   me: {fileID: 3918734371036452193, guid: 4bfd773fa2cf0462a85f943a9aaf6740, type: 3}
+  range: 3
+  rangewide: 3
   sprite: {fileID: 21300000, guid: 9939c3f09a81d448cb3eaf3171a1b3f5, type: 3}
   animation: {fileID: 0}
-  weapon: {fileID: 0}
+  weapon: {fileID: 11400000, guid: 328bac9ad0554481abd9a113bc984347, type: 2}
   money: {x: 10, y: 20}
   size: {x: 1, y: 1}

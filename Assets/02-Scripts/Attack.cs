@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Attack
 {
-    public float dammage;
+    public Weapon weapon;
     public int whom;
     public int frameLeft;
     public int frames;
@@ -12,26 +12,28 @@ public class Attack
     public List<List<Vector2Int>> attack;
     public List<Vector2> temp = new List<Vector2>();
     public List<GameObject> tempAnim = new List<GameObject>();
-    public Attack(List<List<Vector2Int>> attack, Vector2 initialPosition, float dammage, int whom)
+    public Attack(List<List<Vector2Int>> attack, Vector2 initialPosition, Weapon weapon, int whom)
     {
         this.attack = attack;
         frameLeft = attack.Count - 1;
         frames = attack.Count - 1;
         this.initialPosition = initialPosition;
-        this.dammage = dammage;
+        this.weapon = weapon;
         this.whom = whom;
     }
     public Attack(Attack attack, Vector2 recule)
     {
         initialPosition = recule;
-        dammage = attack.dammage;
+        weapon = attack.weapon;
         whom = attack.whom;
     }
     public void destroyAt()
     {
         for (int i = 0; i < tempAnim.Count ; i++)
         {
-            Map.currentRoom.dammages.Remove(temp[i]);
+            Map.currentRoom.map[temp[i]].ennemiesamo = false;
+            Map.currentRoom.map[temp[i]].attacks.RemoveAt(0);
+            //Map.currentRoom.dammages.Remove(temp[i]);
             GameObject.Destroy(tempAnim[i]);
         }
         tempAnim.Clear();
@@ -43,16 +45,26 @@ public class Attack
         destroyAt();
         for (int i = 0; i < attack[frames- frameLeft].Count; i++)
         {
-            if (!Map.currentRoom.dammages.ContainsKey(initialPosition + attack[frames - frameLeft][i]))
+            try
             {
-                temp.Add(initialPosition + attack[frames - frameLeft][i]);
-                Map.currentRoom.dammages.Add(initialPosition+ attack[frames - frameLeft][i], new Attack(this, attack[frames - frameLeft][i]));
-                tempAnim.Add(GameObject.Instantiate(GameObject.Find("Cube"), (Vector2)initialPosition + attack[frames - frameLeft][i], Quaternion.identity, null));
+
+                //Map.currentRoom.dammages.Add(initialPosition + attack[frames - frameLeft][i], new Attack(this, attack[frames - frameLeft][i]));
+                Map.currentRoom.map[kofl.vectorInt(initialPosition + attack[frames - frameLeft][i])].attacks.Add(new Attack(this, attack[frames - frameLeft][i]));
+                if (whom == 0)
+                {
+                    Map.currentRoom.map[kofl.vectorInt(initialPosition + attack[frames - frameLeft][i])].ennemiesamo = true;
+                }
+                var tempObject = GameObject.Instantiate(GameObject.Find("Cube"), (Vector2)initialPosition + attack[frames - frameLeft][i], Quaternion.identity, null);
+                tempObject.GetComponent<SpriteRenderer>().sprite = weapon.sprite;
+                tempAnim.Add(tempObject);
+                temp.Add(kofl.vectorInt(initialPosition + attack[frames - frameLeft][i]));
+            
             }
-            else
+            catch (System.Exception e)
             {
-                Debug.Log("badremover");
+                Debug.Log(e);
             }
+           
         }
         frameLeft -= 1;
         if (frameLeft == -1)

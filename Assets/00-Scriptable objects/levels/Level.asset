@@ -13,11 +13,9 @@ MonoBehaviour:
   m_Name: Level
   m_EditorClassIdentifier: 
   Rooms: 13
-  size: {x: 20, y: 20}
+  size: {x: 20, y: 21}
   ennemies:
-  - {fileID: 11400000, guid: 4fb6886f9f938441faed16e91e5c82fa, type: 2}
-  - {fileID: 11400000, guid: cd75f6f3175d24ae48c59bec64b50861, type: 2}
   - {fileID: 11400000, guid: 0c83e32156a1645e9a0039f9a9431cc8, type: 2}
   backgrounds: []
   RoomTypes: []
-  ennemiesAmmount: {x: 9, y: 11}
+  ennemiesAmmount: {x: 1, y: 1}

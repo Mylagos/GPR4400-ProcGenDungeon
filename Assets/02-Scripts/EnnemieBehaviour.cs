@@ -17,16 +17,20 @@ public class EnnemieBehaviour : MonoBehaviour
     public float life;
     [SerializeField]
     public float damage;
-
+    int[] directions = { 0, 90, 180, 270 };
     public float currentLife;
     bool wait;
     public GameObject healthbar;
+    public Ennemie ennemie;
+    public WeaponBehaviour arm;
+    public int direction = 0;
+    public bool isMoving = false;
     private void Awake()
     {
         currentLife = life;
         point = transform.GetChild(0).gameObject;
         body = transform.GetChild(1).gameObject;
-
+        arm = transform.GetChild(1).GetComponent<WeaponBehaviour>();
 
         // - new Vector3(0,1)to the ennemies;
         healthbar = Instantiate(GameObject.Find("healthbar"), gameObject.transform.GetChild(1).transform.position - new Vector3(0, 1), Quaternion.identity, GameObject.Find("Canvas").transform);
@@ -35,12 +39,62 @@ public class EnnemieBehaviour : MonoBehaviour
         healthbar.SetActive(false);
 
     }
+    public Vector2 Closest()
+    {
+        
+        List<Vector2> pos = new List<Vector2>();
+        var vect = kofl.vectorInt(PlayerMovement.points.transform.position);
+        var vect1 = kofl.vectorInt(point.transform.position);
+        for ( int i  = -ennemie.rangewide/2; i <= ennemie.rangewide/2;i++)
+        {
+            pos.Add(vect + new Vector2(0,ennemie.range + i));
+            pos.Add(vect + new Vector2(0, -ennemie.range + i));
+            pos.Add(vect + new Vector2(-ennemie.range + i, 0));
+            pos.Add(vect + new Vector2(ennemie.range + i, 0));
+        }
+        if (pos.Contains(vect1))
+        {
+            return vect1;
+        }
+        float min = 9999999;
+        var minind = 0;
+        for (int i = 0; i < pos.Count; i++)
+        {
+            var temo = Vector2.Distance(vect1, pos[i]);
+            if (temo < min)
+            {
+                min = temo;
+                minind = i;
+            }
+        }
+        for (int i = 4; i > 0; i--)
+        {
+            if (minind % i == 0)
+            {
+                transform.eulerAngles = new Vector3(0,0, directions[i - 1]);
+                direction = i;
+            }
+        }
+        if (Vector2.Distance(vect1, vect) < min)
+        {
+            return vect1;
+        }
+       
+        return pos[minind];
+    }
     private void Update()
     {
+        if (body.transform.position ==point.transform.position)
+        {
+            isMoving = false;
+        }else
+        {
+            isMoving = true;
+        }
         //die
         if (currentLife < 0)
         {
-            Map.currentRoom.mapp.Remove(point.transform.position);
+            Map.currentRoom.map[kofl.vectorInt(point.transform.position)].block = false;
             Map.currentRoom.ennemies.Remove(gameObject);
             Destroy(gameObject);
             Destroy(healthbar);
@@ -52,46 +106,66 @@ public class EnnemieBehaviour : MonoBehaviour
         //if the ennemies can make a move
         if (PlayerMovement.Turn > 0 && wait == false)
         {
-            var vect = new Vector2Int((int)point.transform.position.x, (int)point.transform.position.y);
-            if (Map.currentRoom.dammages.ContainsKey(vect))
+            
+            var vect = kofl.vectorInt(point.transform.position);
+            var hit = false;
+            for (int i = 0; i< Map.currentRoom.map[vect].attacks.Count; i++)
             {
-                var attack = Map.currentRoom.dammages[vect];
-                if (attack.whom == 0)
+                if  (Map.currentRoom.map[vect].attacks[i].whom == 0)
                 {
-                    SetDammages(attack.initialPosition, attack.dammage);
+                    var attack = Map.currentRoom.map[vect].attacks[i];
                     
+                    SetDammages(attack.initialPosition, attack.weapon.Dammage.x);
+                    hit = true;
+
                 }
-               
             }
-            else
+           
+            if(!hit)
             {
-                //get the CheapPathFinding and if nothing blocks it it go there, if the player block it it will dammage him
-                var cheap = CheapPathFinding();
-                var temp = (Vector2)point.transform.position + cheap;
-                if (!Map.currentRoom.mapp.Contains(temp))
+                if (!isMoving)
                 {
-                    Map.currentRoom.mapp.Remove(point.transform.position);
-                    point.transform.position = temp;
-                    Map.currentRoom.mapp.Add(point.transform.position);
+                    //return le point ou aller a ameliorer
+                    var closest = Closest();
+                    print(closest + " : " + vect);
+                    //if (closest != vect)
+                    //{
+                    //var past = pasta.Bestpasta(closest, body.transform.position);
+                    //TO DO : var past = astart(PlayerMovement.points.transform.position, body.transform.position);
+                    var past = CheapPathFinding();
+                    if (!Map.currentRoom.map[kofl.vectorInt(point.transform.position + (Vector3)past)].block)
+                    {
+                        Map.currentRoom.map[kofl.vectorInt(point.transform.position)].block = false;
+                        point.transform.position += (Vector3)past;
+                        Map.currentRoom.map[kofl.vectorInt(point.transform.position)].block = true;
+                    }
                 }
-                else if (temp == PlayerMovement.positiion)
+                else
                 {
-                    PlayerMovement.player.GetComponent<PlayerMovement>().SetDammages(cheap, damage);
+                    print("shoot");
+                    arm.setAttack(direction);
+
+                    //get the CheapPathFinding and if nothing blocks it it go there, if the player block it it will dammage him
+
+
                 }
+
             }
 
-           
+
+
 
         }
         wait = false;
     }
+   
     //set the damges
     public void SetDammages(Vector2 recule, float damage)
     {
         healthbar.SetActive(true);
         currentLife-=damage;
         wait = true;
-        if(!Map.currentRoom.mapp.Contains((Vector2)point.transform.position + recule))
+        if(!Map.currentRoom.map[kofl.vectorInt((Vector2)point.transform.position + recule)].block)
         {
             var vect = new Vector3();
             if (recule.x == 0)
@@ -105,9 +179,9 @@ public class EnnemieBehaviour : MonoBehaviour
             {
                  vect = new Vector3(Mathf.Abs(recule.x) / recule.x, Mathf.Abs(recule.y) / recule.y);
             }
-            Map.currentRoom.mapp.Remove(point.transform.position);
+            Map.currentRoom.map[kofl.vectorInt((Vector2)point.transform.position)].block = false;
             point.transform.position += vect;
-            Map.currentRoom.mapp.Add(point.transform.position);
+            Map.currentRoom.map[kofl.vectorInt((Vector2)point.transform.position)].block = true;
         }
 
     }

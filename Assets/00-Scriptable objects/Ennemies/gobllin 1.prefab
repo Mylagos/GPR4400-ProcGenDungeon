@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3918734370688276420}
   - component: {fileID: 3918734370688276417}
   - component: {fileID: 3918734370688276419}
+  - component: {fileID: 1305325861955086458}
   m_Layer: 0
   m_Name: body
   m_TagString: Untagged
@@ -116,6 +117,21 @@ MonoBehaviour:
   m_DefaultActionMap: player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &1305325861955086458
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3918734370688276421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81eef5f0f6246427890733579d4d38ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  me: {fileID: 11400000, guid: 328bac9ad0554481abd9a113bc984347, type: 2}
+  thisGameobject: {fileID: 0}
+  WhoDammage: 1
 --- !u!1 &3918734370859279623
 GameObject:
   m_ObjectHideFlags: 0
@@ -200,6 +216,9 @@ MonoBehaviour:
   damage: 0
   currentLife: 0
   healthbar: {fileID: 0}
+  ennemie: {fileID: 11400000, guid: 0c83e32156a1645e9a0039f9a9431cc8, type: 2}
+  arm: {fileID: 0}
+  direction: 0
 --- !u!1 &3918734371070139208
 GameObject:
   m_ObjectHideFlags: 0

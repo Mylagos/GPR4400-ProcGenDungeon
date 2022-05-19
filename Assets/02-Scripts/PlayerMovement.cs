@@ -35,6 +35,7 @@ public class PlayerMovement : MonoBehaviour
 
     //helpfull variables for other scripts
     public static GameObject player;
+    public static GameObject points;
     public static Vector2 positiion;
     public static int Turn = 0;
     public static bool IsMooving;
@@ -44,7 +45,7 @@ public class PlayerMovement : MonoBehaviour
     {
         arm = GetComponent<WeaponBehaviour>();
         //set the static variable so that other script can access it
-        player = gameObject;
+       
         currentlife = life;
         Turn = 0;
 
@@ -52,8 +53,9 @@ public class PlayerMovement : MonoBehaviour
         _input = GetComponent<PlayerInput>();
 
         //add the position of the player as a collision on the map
-        Map.currentRoom.mapp.Add(transform.position);
-      
+        Map.currentRoom.map[transform.position].block = true;
+        player = gameObject;
+        points = point;
     }
     //move take as input a vector for exemple vector(0,1) (move to the top)
     //and take a direction, if the player is not oriented to this direction,
@@ -67,24 +69,38 @@ public class PlayerMovement : MonoBehaviour
             {
                 Vector3 temp = point.transform.position + deplacement;
                 if(temp.y > ymax.x && temp.y < ymax.y && temp.x > xmax.x && temp.x < xmax.y){
-                    if (!Map.currentRoom.mapp.Contains(point.transform.position + deplacement))
+                    if (!Map.currentRoom.map[point.transform.position + deplacement].block)
                     {
                         OnDoor = false;
-                        Map.currentRoom.mapp.Remove(transform.position);
+                        Map.currentRoom.map[point.transform.position].block = false;
                         point.transform.position += deplacement;
-                        Map.currentRoom.mapp.Add(point.transform.position);
+                        Map.currentRoom.map[point.transform.position].block = true;
+                        if (!force)
+                        {
+                            Turn = 1;
+                        }
                     }
+
+                    //if (!Map.currentRoom.mapp.Contains(point.transform.position + deplacement))
+                    //{
+                    //    OnDoor = false;
+                    //    Map.currentRoom.mapp.Remove(transform.position);
+                    //    point.transform.position += deplacement;
+                    //    Map.currentRoom.mapp.Add(point.transform.position);
+                    //}
                 }
             }
         }
         else
         {
+            Turn = 1;
             direction = dir;
             transform.eulerAngles = new Vector3(0, 0, directions[dir]);
         }
     }
     //dammages is the direction were the player will be push after taking the damages
     //ammount is the amount of damages taken
+
     public void SetDammages(Vector2 dammages,float ammount)
     {
         Move(dammages,0,true);
@@ -93,11 +109,21 @@ public class PlayerMovement : MonoBehaviour
         {
             print("sie");
         }
-
     }
 
     private void Update()
     {
+        if (Turn>0)
+        {
+            for (int i = 0; i < Map.currentRoom.map[point.transform.position].attacks.Count; i++)
+            {
+                var attack = Map.currentRoom.map[transform.position].attacks[i];
+                if (attack.whom == 0)
+                {
+                    SetDammages(attack.initialPosition, attack.weapon.Dammage.x);
+                }
+            }
+        }
         positiion = transform.position;
 
         //IsMooving is false if the player is not moving vice versa
@@ -118,9 +144,9 @@ public class PlayerMovement : MonoBehaviour
         {
             if (transform.position == Map.doors[i].transform.position && Map.doors[i].activeInHierarchy)
             {
-                Map.move(newdir[i]);
-                transform.position = newpos[i];
-                point.transform.position = newpos[i];
+                GameObject.Find("Main Camera").transform.GetComponent<Map>().move(newdir[i], newpos[i]);
+                //transform.position = newpos[i];
+                //point.transform.position = newpos[i];
                 OnDoor = true;
                 break;
             }
@@ -139,8 +165,6 @@ public class PlayerMovement : MonoBehaviour
             {
                 direct = newdir[i];
                 Move((Vector2) newdir[i], tem[i]);
-                
-                Turn =1;
                 break;
             }
         }
@@ -149,12 +173,12 @@ public class PlayerMovement : MonoBehaviour
         {
             if (_input.actions["god"+i.ToString()].triggered)
             {
-                Map.move(newdir[i]);
+                GameObject.Find("Main Camera").transform.GetComponent<Map>().move(newdir[i]);
                 break;
             }
         }
         //Attack the ennemies in front of the player
-        if (_input.actions["Attack"].triggered)
+        if (_input.actions["Attack"].triggered && !IsMooving)
         {
             arm.setAttack(tem[direction]);
             Turn = 1;

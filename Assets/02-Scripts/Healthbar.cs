@@ -15,12 +15,13 @@ public class Healthbar : MonoBehaviour
 
     void Update()
     {
-        gameObject.SetActive(Father.activeSelf);
+       
         try
         {
             
             if (child)
             {
+                gameObject.SetActive(Father.activeSelf);
                 //follow the ennemies and adjust it value and color dependin on its health
                 transform.position = Father.transform.GetChild(1).transform.position - new Vector3(0, 1);
                 var temp = Father.GetComponent<EnnemieBehaviour>();

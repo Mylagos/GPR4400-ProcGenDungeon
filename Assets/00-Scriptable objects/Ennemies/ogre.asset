@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: ogre
   m_EditorClassIdentifier: 
   me: {fileID: 3918734371036452193, guid: 209ff0c7ba030497b95417a7e834d51f, type: 3}
+  range: 4
+  rangewide: 1
   sprite: {fileID: 0}
   animation: {fileID: 0}
   weapon: {fileID: 0}
