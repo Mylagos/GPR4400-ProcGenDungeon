@@ -1,0 +1,34 @@
+{
+    "name": "New Player",
+    "maps": [
+        {
+            "name": "Keyboard",
+            "id": "b8f8f7cc-bdad-457c-b5d1-0399723dfb8a",
+            "actions": [
+                {
+                    "name": "Up",
+                    "type": "Button",
+                    "id": "18856daa-cbc9-4bc9-b9f0-690a77cda950",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "8e596480-3e97-4a87-86de-e7f0a0bd3f06",
+                    "path": "<Keyboard>/w",
+                    "interactions": "Hold(duration=0.2)",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Up",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
