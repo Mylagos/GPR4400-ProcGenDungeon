@@ -31,7 +31,6 @@ public class PlayerMovement : MonoBehaviour
     int direction = 0;
     int[] directions = {0, 90, 180, 270};
     bool OnDoor;
-    Vector2 direct;
 
     //helpfull variables for other scripts
     public static GameObject player;
@@ -45,7 +44,7 @@ public class PlayerMovement : MonoBehaviour
     {
         arm = GetComponent<WeaponBehaviour>();
         //set the static variable so that other script can access it
-       
+     
         currentlife = life;
         Turn = 0;
 
@@ -161,9 +160,8 @@ public class PlayerMovement : MonoBehaviour
         //Move if input triggered
         for (int i = 0; i<4 && IsMooving == false;i+=1)
         {
-            if (_input.actions[InputMouvementsNames[i]].triggered)
+            if (_input.actions[InputMouvementsNames[i]].IsPressed())
             {
-                direct = newdir[i];
                 Move((Vector2) newdir[i], tem[i]);
                 break;
             }

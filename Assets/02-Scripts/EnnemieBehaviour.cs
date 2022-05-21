@@ -143,7 +143,7 @@ public class EnnemieBehaviour : MonoBehaviour
                 else
                 {
                     print("shoot");
-                    arm.setAttack(direction);
+                    //arm.setAttack(direction);
 
                     //get the CheapPathFinding and if nothing blocks it it go there, if the player block it it will dammage him
 

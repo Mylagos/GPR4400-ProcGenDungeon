@@ -482,7 +482,7 @@ public class Room
 
             ennemies.Clear();
             var temp = GameObject.Instantiate(GameObject.Find("chest"), new Vector3(0, 0, 0), Quaternion.identity);
-            temp.SetActive(false);
+            temp.transform.parent = background.transform;
             ennemies.Add(temp);
             map[new Vector2(0, 0)].block = true;
         }
