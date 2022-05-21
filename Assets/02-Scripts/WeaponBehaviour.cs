@@ -6,8 +6,6 @@ using UnityEngine.Tilemaps;
 public class WeaponBehaviour : MonoBehaviour
 {
     public Weapon me;
-    int pos;
-    int attack = 0;
     List<List<Vector2Int>>[] posibilities = new List<List<Vector2Int>>[4];
     List<Vector2Int> used = new List<Vector2Int>();
     List<GameObject> anim = new List<GameObject>();
