@@ -54,6 +54,13 @@ public class Map : MonoBehaviour
     //not used anymore :(
     private int RedDisipation;
     //move the player to the room wanted new position being a direction vector
+
+
+    //haut bas droite gauche
+    [SerializeField]
+    private Exit[] exits = new Exit[4];
+    public static Exit[] exitstatic = new Exit[4];
+
     public void move(Vector2Int newPosition,Vector2 player = default(Vector2))
     {
         
@@ -67,6 +74,7 @@ public class Map : MonoBehaviour
     {
         var temp = map[currentRoom.position.x + (int)finalpos.x][currentRoom.position.y + (int)finalpos.y];
         //temp.setActive(true);
+        
         Dictionary<Vector2Int, Vector3> pos = new Dictionary<Vector2Int, Vector3>();
         pos.Add(new Vector2Int(0, 1), new Vector3(0, 8,-10));
         pos.Add(new Vector2Int(0, -1), new Vector3(0, -8, -10));
@@ -88,6 +96,7 @@ public class Map : MonoBehaviour
     }
     void Awake()
     {
+        exitstatic = exits;
         currentlevel = currentLevel;
         //reset static variables
         map = new List<List<Room>>();
@@ -134,6 +143,7 @@ public class Map : MonoBehaviour
     //Set the end room with the RoomTypes parametres
     private void SetEndRooms(List<Vector2Int> RoomTypes)
     {
+        RoomTypes = currentLevel.RoomTypes;
         while (true)
         {
                 try
@@ -201,7 +211,6 @@ public class Map : MonoBehaviour
     //generate the maps using the parameters given
     void Generate(bool redo = false, int currentRooms = 0)
     {
-        string al = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
         //set the current population and the childs
         List<Room> current = new List<Room>() { map[currentLevel.size.x / 2][currentLevel.size.x / 2 + 1], map[currentLevel.size.x / 2][currentLevel.size.x / 2 - 1], map[currentLevel.size.x / 2 - 1][currentLevel.size.x / 2], map[currentLevel.size.x / 2 + 1][currentLevel.size.x / 2] };
         List<Room> child = new List<Room>();
@@ -233,6 +242,16 @@ public class Map : MonoBehaviour
                 List<Vector2Int> paths = availables(current[0].position);
                 //"chances" is currently the chance of having a "Roomsamount" of child
                 int Roomsamount = Percentage(MainChance);
+
+                int[] heights = {0,0,0 };
+                if (current[0].height > currentLevel.depth_heigh.x)
+                {
+                    heights[0] = -1;
+                }
+                if (current[0].height > currentLevel.depth_heigh.x)
+                {
+                    heights[1] = 1;
+                }
                 //if the current room is the last of the population and no one had child, it will have at least one
                 if (current.Count == 1 && child.Count == 0)
                 {
@@ -250,8 +269,11 @@ public class Map : MonoBehaviour
                     //we take a random path
                     Vector2Int ran = paths[Random.Range(0, paths.Count)];
                     //we create a new room at this position
-                    Room temp = new Room(ran, currentLevel.ennemies, background,current[0]);
-                    temp.name = al[Random.Range(0, al.Length)].ToString();
+                    var height = heights[Random.Range(0, heights.Length)];
+                    if (height == -1 && ran == current[0].position + new Vector2Int(0, 1)){height = 0;}
+                    else if (height == 1 && ran == current[0].position + new Vector2Int(0, -1)){height = 0;}
+                    
+                    Room temp = new Room(ran, currentLevel.ennemies, background,current[0],height);
                     //we add the new room to the map and as the current room's child
                     current[0].enfants.Add(temp);
                     map[ran.x][ran.y] = temp;
@@ -405,14 +427,13 @@ public class Room
     public Dictionary<Vector2,Tile> map = new Dictionary<Vector2, Tile>();
 
     public GameObject background;
-
-    public Room(Vector2Int position, List<Ennemie> ennemies, GameObject background, Room father = null, Vector2Int size = default(Vector2Int))
+    public int height;
+    public Room(Vector2Int position, List<Ennemie> ennemies, GameObject background, Room father = null, int height = 0)
     {
 
         this.position = position;
         this.father = father;
-        this.size = size;
-
+        this.height = height;
        
         var vect1 = new Vector2(-8, 5);
         for (int i = 0; i < 17; i++)
@@ -489,7 +510,6 @@ public class Room
 
     }
     //set the room room active or inactive
-   
     public void setActive(bool enable)
     {
 
@@ -501,13 +521,43 @@ public class Room
                 Map.doors[i].SetActive(false);
             }
             List<Vector2Int> neigth = new List<Vector2Int>() { position + new Vector2Int(0, 1), position + new Vector2Int(0, -1), position + new Vector2Int(1, 0), position + new Vector2Int(-1, 0) };
+            List<int> done = new List<int>(){ 0, 1, 2, 3 };
+
             for (int i = 0; i < 4; i++)
             {
                 for (int k = 0; k < enfants.Count; k++)
                 {
                     if (enfants[k].position == neigth[i])
                     {
+                        done.Remove(i);
                         Map.doors[i].SetActive(true);
+                        switch (i, height - enfants[k].height)
+                        {
+                            //couloir haut bas:
+                            case (<2,0):
+                                Map.exitstatic[i].sprites[2].SetActive(true);
+                                break;
+                            //monte haut
+                            case (0, <0):
+                                Map.exitstatic[i].sprites[1].SetActive(true);
+                                break;
+                            //descend bas
+                            case (1, >0):
+                                Map.exitstatic[i].sprites[1].SetActive(true);
+                                break;
+                            //couloir gauche droite
+                            case ( >2,0):
+                                Map.exitstatic[i].sprites[2].SetActive(true);
+                                break;
+                            //haut gauche droite
+                            case ( > 2, <0):
+                                Map.exitstatic[i].sprites[3].SetActive(true);
+                                break;
+                            //bas gauche droite
+                            default:
+                                Map.exitstatic[i].sprites[1].SetActive(true);
+                                break;
+                        }
                     }
                 }
                 try
@@ -522,6 +572,10 @@ public class Room
                     //print(map[currentRoom.x][currentRoom.y].father);
                 }
             }
+            for (int i = 0; i < done.Count; i++)
+            {
+                Map.exitstatic[done[i]].sprites[0].SetActive(true);
+            }
         }
         else
         {
@@ -535,6 +589,16 @@ public class Room
 
     }
 }
+[SerializeField]
+public class Exit
+{
+    public string name;
+    //mur-bas-couloir-haut
+    //mur-escalier(haut ou bas)-couloir-rien
+    public List<GameObject> sprites;
+
+}
+
 public class Tile 
 {
     public Vector2 position;
