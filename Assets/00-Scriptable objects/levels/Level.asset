@@ -13,10 +13,18 @@ MonoBehaviour:
   m_Name: Level
   m_EditorClassIdentifier: 
   Rooms: 13
+  maxheight: 6
+  etage:
+  - {r: 0, g: 0, b: 0, a: 1}
+  - {r: 0.1981132, g: 0.1485849, b: 0.1485849, a: 1}
+  - {r: 0.3207547, g: 0.17096831, b: 0.17096831, a: 1}
+  - {r: 0.5188679, g: 0.18845673, b: 0.18845673, a: 1}
+  - {r: 0.6792453, g: 0.17621931, b: 0.17621931, a: 1}
+  - {r: 0.7830189, g: 0.114498034, b: 0.114498034, a: 1}
+  - {r: 1, g: 0, b: 0, a: 1}
   size: {x: 20, y: 21}
   ennemies:
   - {fileID: 11400000, guid: 0c83e32156a1645e9a0039f9a9431cc8, type: 2}
   backgrounds: []
-  RoomTypes:
-  - {x: 0, y: 3}
+  RoomTypes: []
   ennemiesAmmount: {x: 1, y: 5}

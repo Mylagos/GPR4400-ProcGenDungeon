@@ -1,3 +1,4 @@
+
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -117,12 +118,12 @@ public class Map : MonoBehaviour
             }
         }
         //generate the five mains rooms
-        map[currentLevel.size.x / 2][currentLevel.size.y / 2] = new Room(new Vector2Int(currentLevel.size.x / 2, currentLevel.size.y / 2), currentLevel.ennemies,background);
+        map[currentLevel.size.x / 2][currentLevel.size.y / 2] = new Room(new Vector2Int(currentLevel.size.x / 2, currentLevel.size.y / 2), currentLevel.ennemies,background,null, currentLevel.maxheight / 2);
         List<Vector2Int> Neightboors = new List<Vector2Int>() { new Vector2Int(currentLevel.size.x / 2, currentLevel.size.x / 2 + 1), new Vector2Int(currentLevel.size.x / 2 + 1, currentLevel.size.x / 2), new Vector2Int(currentLevel.size.x / 2, currentLevel.size.x / 2 - 1), new Vector2Int(currentLevel.size.x / 2 - 1, currentLevel.size.x / 2) };
         for (int i = 0; i < 4; i++)
         {
             string al = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            map[Neightboors[i].x][Neightboors[i].y] = new Room(Neightboors[i], currentLevel.ennemies, background, map[currentLevel.size.x / 2][currentLevel.size.y / 2]);
+            map[Neightboors[i].x][Neightboors[i].y] = new Room(Neightboors[i], currentLevel.ennemies, background, map[currentLevel.size.x / 2][currentLevel.size.y / 2],currentLevel.maxheight/2);
             map[Neightboors[i].x][Neightboors[i].y].name = al[Random.Range(0, al.Length)].ToString();
             map[currentLevel.size.x / 2][currentLevel.size.y / 2].enfants.Add(map[Neightboors[i].x][Neightboors[i].y]);
         }
@@ -171,7 +172,7 @@ public class Map : MonoBehaviour
         //generate the cube and the branches
         GameObject temp = GameObject.Instantiate(Cube, (Vector2)First.position, Quaternion.identity, minipmapDady.transform);
         First.MapPiece = temp;
-        temp.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0);
+        temp.GetComponent<SpriteRenderer>().color = currentLevel.etage[First.height];
         Vector2[] pos = { new Vector2(0.5f, 0), new Vector2(-0.5f, 0), new Vector2(0, 0.5f), new Vector2(0, -0.5f) };
         Vector3[] newsize = { new Vector3(0, 0.25f, 0), new Vector3(0, 0.25f, 0), new Vector3(0.25f, 0, 0), new Vector3(0.25f, 0, 0) };
         for (int i = 0; i < 4; i++)
@@ -244,11 +245,11 @@ public class Map : MonoBehaviour
                 int Roomsamount = Percentage(MainChance);
 
                 int[] heights = {0,0,0 };
-                if (current[0].height > currentLevel.depth_heigh.x)
+                if (current[0].height > 0)
                 {
                     heights[0] = -1;
                 }
-                if (current[0].height > currentLevel.depth_heigh.x)
+                if (current[0].height < currentLevel.maxheight-1)
                 {
                     heights[1] = 1;
                 }
@@ -273,7 +274,7 @@ public class Map : MonoBehaviour
                     if (height == -1 && ran == current[0].position + new Vector2Int(0, 1)){height = 0;}
                     else if (height == 1 && ran == current[0].position + new Vector2Int(0, -1)){height = 0;}
                     
-                    Room temp = new Room(ran, currentLevel.ennemies, background,current[0],height);
+                    Room temp = new Room(ran, currentLevel.ennemies, background,current[0],current[0].height + height);
                     //we add the new room to the map and as the current room's child
                     current[0].enfants.Add(temp);
                     map[ran.x][ran.y] = temp;
@@ -513,20 +514,33 @@ public class Room
     public void setActive(bool enable)
     {
 
+       
         if (enable == true)
         {
+            
             MapPiece.GetComponent<SpriteRenderer>().color = new Color(0, 1, 0);
             for (int i = 0; i < 4; i += 1)
             {
                 Map.doors[i].SetActive(false);
+                for (int j = 0; j < Map.exitstatic[i].sprites.Count; j++)
+                {
+                    Map.exitstatic[i].sprites[j].SetActive(false);
+                }
             }
             List<Vector2Int> neigth = new List<Vector2Int>() { position + new Vector2Int(0, 1), position + new Vector2Int(0, -1), position + new Vector2Int(1, 0), position + new Vector2Int(-1, 0) };
             List<int> done = new List<int>(){ 0, 1, 2, 3 };
 
             for (int i = 0; i < 4; i++)
             {
+                try
+                {
+                    Debug.Log(height - enfants[i].height);
+                }
+                catch { }
+                
                 for (int k = 0; k < enfants.Count; k++)
                 {
+                   
                     if (enfants[k].position == neigth[i])
                     {
                         done.Remove(i);
@@ -534,23 +548,23 @@ public class Room
                         switch (i, height - enfants[k].height)
                         {
                             //couloir haut bas:
-                            case (<2,0):
+                            case ( < 2, 0):
                                 Map.exitstatic[i].sprites[2].SetActive(true);
                                 break;
                             //monte haut
-                            case (0, <0):
+                            case (0, < 0):
                                 Map.exitstatic[i].sprites[1].SetActive(true);
                                 break;
                             //descend bas
-                            case (1, >0):
+                            case (1, > 0):
                                 Map.exitstatic[i].sprites[1].SetActive(true);
                                 break;
                             //couloir gauche droite
-                            case ( >2,0):
+                            case ( > 1, 0):
                                 Map.exitstatic[i].sprites[2].SetActive(true);
                                 break;
                             //haut gauche droite
-                            case ( > 2, <0):
+                            case ( > 1, < 0):
                                 Map.exitstatic[i].sprites[3].SetActive(true);
                                 break;
                             //bas gauche droite
@@ -564,7 +578,35 @@ public class Room
                 {
                     if (father.position == neigth[i])
                     {
+                        done.Remove(i);
                         Map.doors[i].SetActive(true);
+                        switch (i, height - father.height)
+                        {
+                            //couloir haut bas:
+                            case ( < 2, 0):
+                                Map.exitstatic[i].sprites[2].SetActive(true);
+                                break;
+                            //monte haut
+                            case (0, < 0):
+                                Map.exitstatic[i].sprites[1].SetActive(true);
+                                break;
+                            //descend bas
+                            case (1, > 0):
+                                Map.exitstatic[i].sprites[1].SetActive(true);
+                                break;
+                            //couloir gauche droite
+                            case ( > 1, 0):
+                                Map.exitstatic[i].sprites[2].SetActive(true);
+                                break;
+                            //haut gauche droite
+                            case ( > 1, < 0):
+                                Map.exitstatic[i].sprites[3].SetActive(true);
+                                break;
+                            //bas gauche droite
+                            default:
+                                Map.exitstatic[i].sprites[1].SetActive(true);
+                                break;
+                        }
                     }
                 }
                 catch
@@ -579,7 +621,7 @@ public class Room
         }
         else
         {
-            MapPiece.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0);
+            MapPiece.GetComponent<SpriteRenderer>().color = Map.currentlevel.etage[height];
         }
         background.SetActive(enable);
         //for (int i = 0; i < ennemies.Count; i++)
@@ -589,7 +631,7 @@ public class Room
 
     }
 }
-[SerializeField]
+[System.Serializable]
 public class Exit
 {
     public string name;

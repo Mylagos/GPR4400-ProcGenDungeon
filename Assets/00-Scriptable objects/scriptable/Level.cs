@@ -6,7 +6,8 @@ using UnityEngine;
 public class Level : ScriptableObject
 {
     public int Rooms;
-    public Vector2 depth_heigh;
+    public int maxheight;
+    public List<Color> etage;
     public Vector2Int size;
     public List<Ennemie> ennemies;
     public List<RoomsBackgrounds> backgrounds;
