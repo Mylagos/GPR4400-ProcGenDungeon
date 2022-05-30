@@ -5,25 +5,28 @@ using UnityEngine;
 
 public class AStarPathFinder : MonoBehaviour
 {
-    [SerializeField] private int _nbIterationsMax;
+    [SerializeField] private static int _nbIterationsMax = 100;
     [SerializeField]
-    [Range(0.1f, 2)] private float _heuristicFactor = 1f;
+    [Range(0.1f, 2)] private static float _heuristicFactor = 1f;
 
-    private List<AStarNode> _open = new List<AStarNode>();
-    private List<AStarNode> _closed = new List<AStarNode>();
-    private List<AStarNode> _path = new List<AStarNode>();
-
-    private Vector2Int _start;
-    private Vector2Int _end;
-    private AStarNode _currentNode;
+    private static List<AStarNode> _open = new List<AStarNode>();
+    private static List<AStarNode> _closed = new List<AStarNode>();
+    private static List<AStarNode> _path = new List<AStarNode>();
+    
+    private static Vector2Int _start;
+    private static Vector2Int _end;
+    private static AStarNode _currentNode;
     public List<AStarNode> Open => _open;
     public List<AStarNode> Closed => _closed;
-    public List<AStarNode> Path => _path;
+    public static List<AStarNode> Path => _path;
     public AStarNode CurrentNode => _currentNode;
     public int NbIterationsMax { get => _nbIterationsMax; set => _nbIterationsMax = value; }
 
-    public void GeneratePath(List<Vector2Int> map, Vector2Int start, Vector2Int end)
+    public static List<AStarNode> GeneratePath(List<Vector2Int> map, Vector2Int start, Vector2Int end)
     {
+        _nbIterationsMax = 100;
+        map.Add(start);
+        map.Add(end);
         _open = new List<AStarNode>();
         _closed = new List<AStarNode>();
         _path = new List<AStarNode>();
@@ -50,7 +53,7 @@ public class AStarPathFinder : MonoBehaviour
                     _currentNode.C + 1,
                     _currentNode);
 
-                if (map.Contains(newPos) && !_open.Exists(Neighbour => Neighbour.Position == newPos) && !._closed.Exists(Neighbour => Neighbour.Position == newPos))
+                if (map.Contains(newPos) && !_open.Exists(Neighbour => Neighbour.Position == newPos) && !_closed.Exists(Neighbour => Neighbour.Position == newPos))
                     _open.Add(newNode);
             }
             _currentNode = _open.OrderBy(o => o.S).ElementAt(0);
@@ -63,8 +66,10 @@ public class AStarPathFinder : MonoBehaviour
         while (rollbacknode.Position != _start)
         {
             rollbacknode = rollbacknode.Parent;
-            Path.Add(rollbacknode);
+            _path.Add(rollbacknode);
         }
+
+        return _path;
     }
 }
 
