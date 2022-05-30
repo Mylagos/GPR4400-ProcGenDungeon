@@ -548,27 +548,30 @@ public class Room
                         switch (i, height - enfants[k].height)
                         {
                             //couloir haut bas:
-                            case ( < 2, 0):
+                            case (<2,0):
                                 Map.exitstatic[i].sprites[2].SetActive(true);
                                 break;
                             //monte haut
-                            case (0, < 0):
+                            case (0, <0):
                                 Map.exitstatic[i].sprites[1].SetActive(true);
                                 break;
                             //descend bas
-                            case (1, > 0):
+                            case (1, >0):
                                 Map.exitstatic[i].sprites[1].SetActive(true);
                                 break;
                             //couloir gauche droite
-                            case ( > 1, 0):
+                            case (2, 0):
+                                Map.exitstatic[i].sprites[2].SetActive(true);
+                                break;
+                            case ( >1,0):
                                 Map.exitstatic[i].sprites[2].SetActive(true);
                                 break;
                             //haut gauche droite
-                            case ( > 1, < 0):
+                            case ( > 1, <0):
                                 Map.exitstatic[i].sprites[3].SetActive(true);
                                 break;
                             //bas gauche droite
-                            default:
+                            case ( > 1, > 0):
                                 Map.exitstatic[i].sprites[1].SetActive(true);
                                 break;
                         }

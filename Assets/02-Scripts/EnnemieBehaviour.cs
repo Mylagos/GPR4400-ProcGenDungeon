@@ -100,62 +100,7 @@ public class EnnemieBehaviour : MonoBehaviour
             Destroy(healthbar);
             
         }
-        //follow the point
-        body.transform.position = Vector2.MoveTowards(body.transform.position, point.transform.position, speed * Time.deltaTime);
-        
         //if the ennemies can make a move
-        if (PlayerMovement.Turn > 0 && wait == false)
-        {
-            
-            var vect = kofl.vectorInt(point.transform.position);
-            var hit = false;
-            for (int i = 0; i< Map.currentRoom.map[vect].attacks.Count; i++)
-            {
-                if  (Map.currentRoom.map[vect].attacks[i].whom == 0)
-                {
-                    var attack = Map.currentRoom.map[vect].attacks[i];
-                    
-                    SetDammages(attack.initialPosition, attack.weapon.Dammage.x);
-                    hit = true;
-
-                }
-            }
-           
-            if(!hit)
-            {
-                if (!isMoving)
-                {
-                    //return le point ou aller a ameliorer
-                    var closest = Closest();
-                    print(closest + " : " + vect);
-                    //if (closest != vect)
-                    //{
-                    //var past = pasta.Bestpasta(closest, body.transform.position);
-                    //TO DO : var past = astart(PlayerMovement.points.transform.position, body.transform.position);
-                    var past = CheapPathFinding();
-                    if (!Map.currentRoom.map[kofl.vectorInt(point.transform.position + (Vector3)past)].block)
-                    {
-                        Map.currentRoom.map[kofl.vectorInt(point.transform.position)].block = false;
-                        point.transform.position += (Vector3)past;
-                        Map.currentRoom.map[kofl.vectorInt(point.transform.position)].block = true;
-                    }
-                }
-                else
-                {
-                    print("shoot");
-                    //arm.setAttack(direction);
-
-                    //get the CheapPathFinding and if nothing blocks it it go there, if the player block it it will dammage him
-
-
-                }
-
-            }
-
-
-
-
-        }
         wait = false;
     }
    
@@ -186,6 +131,67 @@ public class EnnemieBehaviour : MonoBehaviour
 
     }
     //return a Cheap as fock Path Finding
+    public IEnumerator move()
+    {
+        print("hi");
+        yield return new WaitForSeconds(1.2f);
+        print("his");
+        if (wait == false)
+        {
+            var vect = kofl.vectorInt(point.transform.position);
+            var hit = false;
+            for (int i = 0; i < Map.currentRoom.map[vect].attacks.Count; i++)
+            {
+                if (Map.currentRoom.map[vect].attacks[i].whom == 0)
+                {
+                    var attack = Map.currentRoom.map[vect].attacks[i];
+
+                    SetDammages(attack.initialPosition, attack.weapon.Dammage.x);
+                    hit = true;
+
+                }
+            }
+            if (!hit)
+            {
+                if (!isMoving)
+                {
+                    //return le point ou aller a ameliorer
+                    var closest = Closest();
+                    print(closest + " : " + vect);
+                    //if (closest != vect)
+                    //{
+                    //var past = pasta.Bestpasta(closest, body.transform.position);
+                    //TO DO : var past = astart(PlayerMovement.points.transform.position, body.transform.position);
+                    var past = CheapPathFinding();
+                    if (!Map.currentRoom.map[kofl.vectorInt(point.transform.position + (Vector3)past)].block)
+                    {
+                        Map.currentRoom.map[kofl.vectorInt(point.transform.position)].block = false;
+                        point.transform.position += (Vector3)past;
+                        Map.currentRoom.map[kofl.vectorInt(point.transform.position)].block = true;
+                    }
+                }
+                else
+                {
+                    print("shoot");
+                    //arm.setAttack(direction);
+
+                    //get the CheapPathFinding and if nothing blocks it it go there, if the player block it it will dammage him
+
+
+                }
+
+            }
+
+            while (body.transform.position!=point.transform.position)
+            {
+                body.transform.position = Vector2.MoveTowards(body.transform.position, point.transform.position, speed * Time.deltaTime);
+                yield return new WaitForEndOfFrame();
+            }
+
+            
+        }
+        PlayerMovement.step_by_step = true;
+    }
     //a wall breaks it
     private Vector2 CheapPathFinding()
     {

@@ -39,7 +39,8 @@ public class PlayerMovement : MonoBehaviour
     public static int Turn = 0;
     public static bool IsMooving;
 
-
+    public static bool step_by_step;
+    bool canmove = true;
     private void Start()
     {
         arm = GetComponent<WeaponBehaviour>();
@@ -60,6 +61,21 @@ public class PlayerMovement : MonoBehaviour
     //and take a direction, if the player is not oriented to this direction,
     //the player is not moving but simply rotating.
     //If force is true the direction dosnt matter
+    IEnumerator Move()
+    {
+        canmove = false;
+        step_by_step = false;
+        foreach (GameObject obj in Map.currentRoom.ennemies)
+        {
+            step_by_step = false;
+            StartCoroutine(obj.GetComponent<EnnemieBehaviour>().move());
+            while (step_by_step == false)
+            {
+                yield return new WaitForEndOfFrame();
+            }
+        }
+        canmove = true;
+    }
     private void Move(Vector3 deplacement, int dir, bool force = false)
     {
         if (dir == direction || force)
@@ -78,6 +94,8 @@ public class PlayerMovement : MonoBehaviour
                         {
                             Turn = 1;
                         }
+                        print("Move");
+                        StartCoroutine(Move());
                     }
 
                     //if (!Map.currentRoom.mapp.Contains(point.transform.position + deplacement))
@@ -158,7 +176,7 @@ public class PlayerMovement : MonoBehaviour
             Turn -= 1;
         }
         //Move if input triggered
-        for (int i = 0; i<4 && IsMooving == false;i+=1)
+        for (int i = 0; i<4 && IsMooving == false && canmove ; i+=1)
         {
             if (_input.actions[InputMouvementsNames[i]].IsPressed())
             {
@@ -167,7 +185,7 @@ public class PlayerMovement : MonoBehaviour
             }
         }
         //God Mod, instant change room with the arrows
-        for (int i = 0; i < 4 && IsMooving == false; i += 1)
+        for (int i = 0; i < 4 && IsMooving == false && canmove; i += 1)
         {
             if (_input.actions["god"+i.ToString()].triggered)
             {
