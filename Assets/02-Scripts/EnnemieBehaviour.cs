@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class EnnemieBehaviour : MonoBehaviour
 {
@@ -162,13 +163,19 @@ public class EnnemieBehaviour : MonoBehaviour
                     //{
                     //var past = pasta.Bestpasta(closest, body.transform.position);
                     //TO DO : var past = astart(PlayerMovement.points.transform.position, body.transform.position);
-                    var past = CheapPathFinding();
-                    if (!Map.currentRoom.map[kofl.vectorInt(point.transform.position + (Vector3)past)].block)
-                    {
+                    var path = AStarPathFinder.GeneratePath(Map.currentRoom.AstarMapVector2Int(), kofl.vector2Int(PlayerMovement.points.transform.position), kofl.vector2Int(point.transform.position));
+                    //var past = CheapPathFinding();
                         Map.currentRoom.map[kofl.vectorInt(point.transform.position)].block = false;
-                        point.transform.position += (Vector3)past;
-                        Map.currentRoom.map[kofl.vectorInt(point.transform.position)].block = true;
+                        if(path[0].Position == kofl.vector2Int(point.transform.position))
+                        {
+                        point.transform.position = kofl.vector2Int2vect3(path[1].Position);
                     }
+                        else
+                        {
+                            point.transform.position = kofl.vector2Int2vect3(path[0].Position);
+                    }
+                        Map.currentRoom.map[kofl.vectorInt(point.transform.position)].block = true;
+                    
                 }
                 else
                 {

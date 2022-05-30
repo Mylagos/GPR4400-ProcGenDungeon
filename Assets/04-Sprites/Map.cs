@@ -491,6 +491,29 @@ public class Room
         }
         return pos;
     }
+     public List<Vector2Int> AstarMapVector2Int()
+    {
+        List<Vector2Int> pos = new List<Vector2Int>();
+        var vect1 = new Vector2Int(-8, 5);
+        for(int i  = 0; i < 16;i++)
+        {
+            for (int k = 0; k < 10; k++)
+            {
+                if (!(map[vect1].block || map[vect1].ennemiesamo))
+                {
+                    
+                    pos.Add(new Vector2Int(vect1.x, vect1.y));
+                }
+                vect1.x += 1;
+                if (vect1.x == 9)
+                {
+                    vect1.x = -8;
+                    vect1.y -= 1;
+                }
+            }
+        }
+        return pos;
+    }
     //set the mode of the room : 0 = chessroom, 1 = ...
     public void setMode(int i)
     {
