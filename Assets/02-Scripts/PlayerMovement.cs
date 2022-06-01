@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Tilemaps;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -26,7 +27,10 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private Vector2Int xmax;
 
-    
+    public int moves_ammount;
+    public Tilemap GUI;
+    public TileBase normal;
+    public int moves;
     //personnal temp variables
     int direction = 0;
     int[] directions = {0, 90, 180, 270};
@@ -43,6 +47,7 @@ public class PlayerMovement : MonoBehaviour
     bool canmove = true;
     private void Start()
     {
+        moves = moves_ammount;
         arm = GetComponent<WeaponBehaviour>();
         //set the static variable so that other script can access it
      
@@ -63,18 +68,35 @@ public class PlayerMovement : MonoBehaviour
     //If force is true the direction dosnt matter
     IEnumerator Move()
     {
-        canmove = false;
-        step_by_step = false;
-        foreach (GameObject obj in Map.currentRoom.ennemies)
+        GUI.ClearAllTiles();
+        if (moves == 0)
         {
+            canmove = false;
             step_by_step = false;
-            StartCoroutine(obj.GetComponent<EnnemieBehaviour>().move());
-            while (step_by_step == false)
+            foreach (GameObject obj in Map.currentRoom.ennemies)
             {
-                yield return new WaitForEndOfFrame();
+                step_by_step = false;
+                StartCoroutine(obj.GetComponent<EnnemieBehaviour>().move());
+                while (step_by_step == false)
+                {
+                    yield return new WaitForEndOfFrame();
+                }
             }
+            canmove = true;
+            moves = moves_ammount;
         }
-        canmove = true;
+        int k = moves;
+        for(int i = -moves; i < moves+1;i++)
+        {
+            for (int j = -Mathf.Abs(moves - Mathf.Abs(k)); j < Mathf.Abs(moves - Mathf.Abs(k) + 1); j++)
+            {
+                GUI.SetTile(new Vector3Int(i,j)+kofl.Vector3Int(point.transform.position)-new Vector3Int(1,1),normal);
+            }
+            k--;
+            print(i);
+        }
+            moves--;
+       
     }
     private void Move(Vector3 deplacement, int dir, bool force = false)
     {
@@ -94,7 +116,6 @@ public class PlayerMovement : MonoBehaviour
                         {
                             Turn = 1;
                         }
-                        print("Move");
                         StartCoroutine(Move());
                     }
 

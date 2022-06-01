@@ -23,8 +23,8 @@ public class Map : MonoBehaviour
     public static Level currentlevel;
     public GameObject currentRoomObject = null;
     //the cube that is copy paste to make the minimap
-    [SerializeField]
-    private GameObject Cube;
+    public static GameObject cube;
+    public GameObject Cube;
     //the chances of getting 0, 1, 2 or 3 rooms at each node
     [SerializeField]
     private List<int> MainChance = new List<int>();
@@ -97,6 +97,7 @@ public class Map : MonoBehaviour
     }
     void Awake()
     {
+        cube = Cube;
         exitstatic = exits;
         currentlevel = currentLevel;
         //reset static variables

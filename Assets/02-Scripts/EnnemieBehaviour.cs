@@ -26,6 +26,9 @@ public class EnnemieBehaviour : MonoBehaviour
     public WeaponBehaviour arm;
     public int direction = 0;
     public bool isMoving = false;
+    public float waittime;
+
+    List<GameObject> pathobject = new List<GameObject>();
     private void Awake()
     {
         currentLife = life;
@@ -42,13 +45,13 @@ public class EnnemieBehaviour : MonoBehaviour
     }
     public Vector2 Closest()
     {
-        
+
         List<Vector2> pos = new List<Vector2>();
         var vect = kofl.vectorInt(PlayerMovement.points.transform.position);
         var vect1 = kofl.vectorInt(point.transform.position);
-        for ( int i  = -ennemie.rangewide/2; i <= ennemie.rangewide/2;i++)
+        for (int i = -ennemie.rangewide / 2; i <= ennemie.rangewide / 2; i++)
         {
-            pos.Add(vect + new Vector2(0,ennemie.range + i));
+            pos.Add(vect + new Vector2(0, ennemie.range + i));
             pos.Add(vect + new Vector2(0, -ennemie.range + i));
             pos.Add(vect + new Vector2(-ennemie.range + i, 0));
             pos.Add(vect + new Vector2(ennemie.range + i, 0));
@@ -72,7 +75,7 @@ public class EnnemieBehaviour : MonoBehaviour
         {
             if (minind % i == 0)
             {
-                transform.eulerAngles = new Vector3(0,0, directions[i - 1]);
+                transform.eulerAngles = new Vector3(0, 0, directions[i - 1]);
                 direction = i;
             }
         }
@@ -80,15 +83,16 @@ public class EnnemieBehaviour : MonoBehaviour
         {
             return vect1;
         }
-       
+
         return pos[minind];
     }
     private void Update()
     {
-        if (body.transform.position ==point.transform.position)
+        if (body.transform.position == point.transform.position)
         {
             isMoving = false;
-        }else
+        }
+        else
         {
             isMoving = true;
         }
@@ -99,31 +103,32 @@ public class EnnemieBehaviour : MonoBehaviour
             Map.currentRoom.ennemies.Remove(gameObject);
             Destroy(gameObject);
             Destroy(healthbar);
-            
+
         }
         //if the ennemies can make a move
         wait = false;
     }
-   
+
     //set the damges
     public void SetDammages(Vector2 recule, float damage)
     {
         healthbar.SetActive(true);
-        currentLife-=damage;
+        currentLife -= damage;
         wait = true;
-        if(!Map.currentRoom.map[kofl.vectorInt((Vector2)point.transform.position + recule)].block)
+        if (!Map.currentRoom.map[kofl.vectorInt((Vector2)point.transform.position + recule)].block)
         {
             var vect = new Vector3();
             if (recule.x == 0)
             {
-                 vect = new Vector3(0, Mathf.Abs(recule.y) / recule.y);
-            }else if (recule.y == 0)
+                vect = new Vector3(0, Mathf.Abs(recule.y) / recule.y);
+            }
+            else if (recule.y == 0)
             {
-                 vect = new Vector3(Mathf.Abs(recule.x) / recule.x, 0);
+                vect = new Vector3(Mathf.Abs(recule.x) / recule.x, 0);
             }
             else
             {
-                 vect = new Vector3(Mathf.Abs(recule.x) / recule.x, Mathf.Abs(recule.y) / recule.y);
+                vect = new Vector3(Mathf.Abs(recule.x) / recule.x, Mathf.Abs(recule.y) / recule.y);
             }
             Map.currentRoom.map[kofl.vectorInt((Vector2)point.transform.position)].block = false;
             point.transform.position += vect;
@@ -134,68 +139,72 @@ public class EnnemieBehaviour : MonoBehaviour
     //return a Cheap as fock Path Finding
     public IEnumerator move()
     {
-        print("hi");
-        yield return new WaitForSeconds(1.2f);
-        print("his");
-        if (wait == false)
+        
+        for (int loop = 0; loop < ennemie.moves; loop++)
         {
-            var vect = kofl.vectorInt(point.transform.position);
-            var hit = false;
-            for (int i = 0; i < Map.currentRoom.map[vect].attacks.Count; i++)
+            yield return new WaitForSeconds(waittime);
+            if (wait == false)
             {
-                if (Map.currentRoom.map[vect].attacks[i].whom == 0)
+                var vect = kofl.vectorInt(point.transform.position);
+                var hit = false;
+                for (int i = 0; i < Map.currentRoom.map[vect].attacks.Count; i++)
                 {
-                    var attack = Map.currentRoom.map[vect].attacks[i];
+                    if (Map.currentRoom.map[vect].attacks[i].whom == 0)
+                    {
+                        var attack = Map.currentRoom.map[vect].attacks[i];
 
-                    SetDammages(attack.initialPosition, attack.weapon.Dammage.x);
-                    hit = true;
+                        SetDammages(attack.initialPosition, attack.weapon.Dammage.x);
+                        hit = true;
 
+                    }
                 }
-            }
-            if (!hit)
-            {
-                if (!isMoving)
+
+                //if (closest != vect)
+                //{
+                //var past = pasta.Bestpasta(closest, body.transform.position);
+                //TO DO : var past = astart(PlayerMovement.points.transform.position, body.transform.position);
+                if (!hit)
                 {
-                    //return le point ou aller a ameliorer
-                    var closest = Closest();
-                    print(closest + " : " + vect);
-                    //if (closest != vect)
-                    //{
-                    //var past = pasta.Bestpasta(closest, body.transform.position);
-                    //TO DO : var past = astart(PlayerMovement.points.transform.position, body.transform.position);
-                    var path = AStarPathFinder.GeneratePath(Map.currentRoom.AstarMapVector2Int(), kofl.vector2Int(PlayerMovement.points.transform.position), kofl.vector2Int(point.transform.position));
-                    //var past = CheapPathFinding();
+                    if (!isMoving)
+                    {
+                        var path = AStarPathFinder.GeneratePath(Map.currentRoom.AstarMapVector2Int(), kofl.vector2Int(point.transform.position), kofl.vector2Int(PlayerMovement.points.transform.position));
+                        path.Reverse();
+
                         Map.currentRoom.map[kofl.vectorInt(point.transform.position)].block = false;
-                        if(path[0].Position == kofl.vector2Int(point.transform.position))
-                        {
-                        point.transform.position = kofl.vector2Int2vect3(path[1].Position);
-                    }
-                        else
-                        {
-                            point.transform.position = kofl.vector2Int2vect3(path[0].Position);
-                    }
+                        point.transform.position = kofl.vector2Int2vect3(path[loop].Position);
                         Map.currentRoom.map[kofl.vectorInt(point.transform.position)].block = true;
-                    
+
+
+                        for (int i = 0; i < pathobject.Count; i++)
+                        {
+                            Destroy(pathobject[i]);
+                        }
+                        pathobject.Clear();
+                        for (int i = 0; i < path.Count; i++)
+                        {
+                            var obj = Instantiate(Map.cube, kofl.vector2Int2vect3(path[i].Position), Quaternion.identity);
+                            pathobject.Add(obj);
+                        }
+                    }
+                    else
+                    {
+                        print("shoot");
+                        //arm.setAttack(direction);
+                        //get the CheapPathFinding and if nothing blocks it it go there, if the player block it it will dammage him
+
+
+                    }
+
                 }
-                else
+
+                while (body.transform.position != point.transform.position)
                 {
-                    print("shoot");
-                    //arm.setAttack(direction);
-
-                    //get the CheapPathFinding and if nothing blocks it it go there, if the player block it it will dammage him
-
-
+                    body.transform.position = Vector2.MoveTowards(body.transform.position, point.transform.position, speed * Time.deltaTime);
+                    yield return new WaitForEndOfFrame();
                 }
 
-            }
 
-            while (body.transform.position!=point.transform.position)
-            {
-                body.transform.position = Vector2.MoveTowards(body.transform.position, point.transform.position, speed * Time.deltaTime);
-                yield return new WaitForEndOfFrame();
             }
-
-            
         }
         PlayerMovement.step_by_step = true;
     }

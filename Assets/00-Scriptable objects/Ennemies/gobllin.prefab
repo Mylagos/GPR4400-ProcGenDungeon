@@ -202,6 +202,9 @@ MonoBehaviour:
   healthbar: {fileID: 0}
   ennemie: {fileID: 11400000, guid: 4fb6886f9f938441faed16e91e5c82fa, type: 2}
   arm: {fileID: 0}
+  direction: 0
+  isMoving: 0
+  waittime: 0.1
 --- !u!1 &3918734371070139208
 GameObject:
   m_ObjectHideFlags: 0

@@ -13,4 +13,5 @@ public class Ennemie : ScriptableObject
     public Weapon weapon;
     public Vector2Int money;
     public Vector2Int size;
+    public int moves;
 }
