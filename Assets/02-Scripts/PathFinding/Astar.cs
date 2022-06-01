@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class AStarPathFinder : MonoBehaviour
 {
@@ -21,6 +22,8 @@ public class AStarPathFinder : MonoBehaviour
     public static List<AStarNode> Path => _path;
     public AStarNode CurrentNode => _currentNode;
     public int NbIterationsMax { get => _nbIterationsMax; set => _nbIterationsMax = value; }
+    [SerializeField]
+    private Tilemap _astarDebugTilemap;
 
     public static List<AStarNode> GeneratePath(List<Vector2Int> map, Vector2Int start, Vector2Int end)
     {
@@ -66,6 +69,7 @@ public class AStarPathFinder : MonoBehaviour
         while (rollbacknode.Position != _start)
         {
             rollbacknode = rollbacknode.Parent;
+            
             _path.Add(rollbacknode);
         }
 
