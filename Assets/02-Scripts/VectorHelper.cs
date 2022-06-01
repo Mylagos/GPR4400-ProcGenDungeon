@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class kofl : MonoBehaviour
+public static class VectorHelper
 {
     public static Vector2 vectorInt(Vector2 bas)
     {

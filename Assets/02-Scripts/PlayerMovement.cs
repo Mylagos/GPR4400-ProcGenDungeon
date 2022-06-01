@@ -16,7 +16,14 @@ public class PlayerMovement : MonoBehaviour
     private int speed;
     [SerializeField]
     private float life;
-    private static float currentlife;
+    [SerializeField]
+    private float currentlife;
+
+    public float MaxHealth
+    {
+        get => life;
+    }
+    public float CurrentHealth { get => currentlife; }
 
     public WeaponBehaviour arm;
     //displacement elements
@@ -90,7 +97,11 @@ public class PlayerMovement : MonoBehaviour
         {
             for (int j = -Mathf.Abs(moves - Mathf.Abs(k)); j < Mathf.Abs(moves - Mathf.Abs(k) + 1); j++)
             {
+<<<<<<< HEAD
                 GUI.SetTile(new Vector3Int(i, j) + kofl.Vector3Int(point.transform.position) - new Vector3Int(1, 1), normal);
+=======
+                GUI.SetTile(new Vector3Int(i,j)+VectorHelper.Vector3Int(point.transform.position)-new Vector3Int(1,1),normal);
+>>>>>>> b5a1a439e6b9a8460521a19ec9c03a6ce2c68a23
             }
             k--;
             print(i);

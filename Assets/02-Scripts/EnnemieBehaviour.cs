@@ -47,8 +47,8 @@ public class EnnemieBehaviour : MonoBehaviour
     {
 
         List<Vector2> pos = new List<Vector2>();
-        var vect = kofl.vectorInt(PlayerMovement.points.transform.position);
-        var vect1 = kofl.vectorInt(point.transform.position);
+        var vect = VectorHelper.vectorInt(PlayerMovement.points.transform.position);
+        var vect1 = VectorHelper.vectorInt(point.transform.position);
         for (int i = -ennemie.rangewide / 2; i <= ennemie.rangewide / 2; i++)
         {
             pos.Add(vect + new Vector2(0, ennemie.range + i));
@@ -99,7 +99,7 @@ public class EnnemieBehaviour : MonoBehaviour
         //die
         if (currentLife < 0)
         {
-            Map.currentRoom.map[kofl.vectorInt(point.transform.position)].block = false;
+            Map.currentRoom.map[VectorHelper.vectorInt(point.transform.position)].block = false;
             Map.currentRoom.ennemies.Remove(gameObject);
             Destroy(gameObject);
             Destroy(healthbar);
@@ -115,7 +115,7 @@ public class EnnemieBehaviour : MonoBehaviour
         healthbar.SetActive(true);
         currentLife -= damage;
         wait = true;
-        if (!Map.currentRoom.map[kofl.vectorInt((Vector2)point.transform.position + recule)].block)
+        if (!Map.currentRoom.map[VectorHelper.vectorInt((Vector2)point.transform.position + recule)].block)
         {
             var vect = new Vector3();
             if (recule.x == 0)
@@ -130,9 +130,9 @@ public class EnnemieBehaviour : MonoBehaviour
             {
                 vect = new Vector3(Mathf.Abs(recule.x) / recule.x, Mathf.Abs(recule.y) / recule.y);
             }
-            Map.currentRoom.map[kofl.vectorInt((Vector2)point.transform.position)].block = false;
+            Map.currentRoom.map[VectorHelper.vectorInt((Vector2)point.transform.position)].block = false;
             point.transform.position += vect;
-            Map.currentRoom.map[kofl.vectorInt((Vector2)point.transform.position)].block = true;
+            Map.currentRoom.map[VectorHelper.vectorInt((Vector2)point.transform.position)].block = true;
         }
 
     }
@@ -145,7 +145,7 @@ public class EnnemieBehaviour : MonoBehaviour
             yield return new WaitForSeconds(waittime);
             if (wait == false)
             {
-                var vect = kofl.vectorInt(point.transform.position);
+                var vect = VectorHelper.vectorInt(point.transform.position);
                 var hit = false;
                 for (int i = 0; i < Map.currentRoom.map[vect].attacks.Count; i++)
                 {
@@ -167,24 +167,15 @@ public class EnnemieBehaviour : MonoBehaviour
                 {
                     if (!isMoving)
                     {
-                        var path = AStarPathFinder.GeneratePath(Map.currentRoom.AstarMapVector2Int(), kofl.vector2Int(point.transform.position), kofl.vector2Int(PlayerMovement.points.transform.position));
+                        var path = AStarPathFinder.GeneratePath(Map.currentRoom.AstarMapVector2Int(), VectorHelper.vector2Int(point.transform.position), VectorHelper.vector2Int(PlayerMovement.points.transform.position));
                         path.Reverse();
 
-                        Map.currentRoom.map[kofl.vectorInt(point.transform.position)].block = false;
-                        point.transform.position = kofl.vector2Int2vect3(path[loop].Position);
-                        Map.currentRoom.map[kofl.vectorInt(point.transform.position)].block = true;
+                        Map.currentRoom.map[VectorHelper.vectorInt(point.transform.position)].block = false;
+                        point.transform.position = VectorHelper.vector2Int2vect3(path[loop].Position);
+                        Map.currentRoom.map[VectorHelper.vectorInt(point.transform.position)].block = true;
+                        
+                        DebugAStar(path);
 
-
-                        for (int i = 0; i < pathobject.Count; i++)
-                        {
-                            Destroy(pathobject[i]);
-                        }
-                        pathobject.Clear();
-                        for (int i = 0; i < path.Count; i++)
-                        {
-                            var obj = Instantiate(Map.cube, kofl.vector2Int2vect3(path[i].Position), Quaternion.identity);
-                            pathobject.Add(obj);
-                        }
                     }
                     else
                     {
@@ -208,6 +199,22 @@ public class EnnemieBehaviour : MonoBehaviour
         }
         PlayerMovement.step_by_step = true;
     }
+
+    private void DebugAStar(List<AStarNode> path)
+    {
+        for (int i = 0; i < pathobject.Count; i++)
+        {
+            Destroy(pathobject[i]);
+        }
+
+        pathobject.Clear();
+        for (int i = 0; i < path.Count; i++)
+        {
+            var obj = Instantiate(Map.cube, VectorHelper.vector2Int2vect3(path[i].Position), Quaternion.identity);
+            pathobject.Add(obj);
+        }
+    }
+
     //a wall breaks it
     private Vector2 CheapPathFinding()
     {

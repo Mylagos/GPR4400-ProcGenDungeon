@@ -49,15 +49,15 @@ public class Attack
             {
 
                 //Map.currentRoom.dammages.Add(initialPosition + attack[frames - frameLeft][i], new Attack(this, attack[frames - frameLeft][i]));
-                Map.currentRoom.map[kofl.vectorInt(initialPosition + attack[frames - frameLeft][i])].attacks.Add(new Attack(this, attack[frames - frameLeft][i]));
+                Map.currentRoom.map[VectorHelper.vectorInt(initialPosition + attack[frames - frameLeft][i])].attacks.Add(new Attack(this, attack[frames - frameLeft][i]));
                 if (whom == 0)
                 {
-                    Map.currentRoom.map[kofl.vectorInt(initialPosition + attack[frames - frameLeft][i])].ennemiesamo = true;
+                    Map.currentRoom.map[VectorHelper.vectorInt(initialPosition + attack[frames - frameLeft][i])].ennemiesamo = true;
                 }
                 var tempObject = GameObject.Instantiate(GameObject.Find("Cube"), (Vector2)initialPosition + attack[frames - frameLeft][i], Quaternion.identity, null);
                 tempObject.GetComponent<SpriteRenderer>().sprite = weapon.sprite;
                 tempAnim.Add(tempObject);
-                temp.Add(kofl.vectorInt(initialPosition + attack[frames - frameLeft][i]));
+                temp.Add(VectorHelper.vectorInt(initialPosition + attack[frames - frameLeft][i]));
             
             }
             catch (System.Exception e)
