@@ -107,10 +107,10 @@ TextureImporter:
       name: Long Range Stab_0
       rect:
         serializedVersion: 2
-        x: 2
-        y: 1
-        width: 13
-        height: 23
+        x: 0
+        y: 0
+        width: 78
+        height: 24
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -118,8 +118,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ce104025c30c01b43b607e94538bfdfe
-      internalID: 1255936866
+      spriteID: 9e7f6b5510de8e44380e5224a8cda9b1
+      internalID: 1043865334
       vertices: []
       indices: 
       edges: []
@@ -129,9 +129,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 78
-        y: 1
-        width: 17
-        height: 18
+        y: 0
+        width: 78
+        height: 24
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -139,8 +139,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 14fb183babeecb54690afcdff18c1d5a
-      internalID: -4239898
+      spriteID: 58f769763198b224a8bacf4f8c3b886b
+      internalID: 728062395
       vertices: []
       indices: 
       edges: []
@@ -150,9 +150,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 156
-        y: 1
-        width: 18
-        height: 22
+        y: 0
+        width: 78
+        height: 24
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -160,8 +160,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 19a5f11753ae45a4586a882f1b898811
-      internalID: -733231912
+      spriteID: ab6ba5ca296e8df4f8febb1a86fabe37
+      internalID: -656653307
       vertices: []
       indices: 
       edges: []
@@ -170,10 +170,10 @@ TextureImporter:
       name: Long Range Stab_3
       rect:
         serializedVersion: 2
-        x: 233
-        y: 1
-        width: 21
-        height: 18
+        x: 234
+        y: 0
+        width: 78
+        height: 24
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -181,8 +181,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 296606238cc18ca4fa4160c1ba99e702
-      internalID: 1606064058
+      spriteID: ac1d7e37b184a58488889aaef6dd5310
+      internalID: 1919188381
       vertices: []
       indices: 
       edges: []
@@ -192,9 +192,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 312
-        y: 1
-        width: 21
-        height: 18
+        y: 0
+        width: 78
+        height: 24
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -202,8 +202,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 17526a817cd9e8144b7d9df9044897e4
-      internalID: 881183758
+      spriteID: 46e0244160c861b4391b53037357f9ba
+      internalID: 1329895270
       vertices: []
       indices: 
       edges: []
@@ -213,9 +213,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 390
-        y: 1
-        width: 20
-        height: 18
+        y: 0
+        width: 78
+        height: 24
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -223,8 +223,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a2832da1bc8f83e458fa2c2768a17410
-      internalID: 89619734
+      spriteID: 85babcc5975919e448ea2d6bf370dccf
+      internalID: -1778650927
       vertices: []
       indices: 
       edges: []
@@ -234,9 +234,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 468
-        y: 1
-        width: 20
-        height: 18
+        y: 0
+        width: 78
+        height: 24
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -244,8 +244,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c92dbbfc836d6394a98bc691c4f0b006
-      internalID: 954108298
+      spriteID: 4809503fc7acf9a43a6babfab41b78b4
+      internalID: -1317732389
       vertices: []
       indices: 
       edges: []
@@ -255,9 +255,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 546
-        y: 1
-        width: 30
-        height: 19
+        y: 0
+        width: 78
+        height: 24
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -265,8 +265,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: bfa512a5fabdf9c4297147321530b2a0
-      internalID: -1928565877
+      spriteID: e6898ba0f60afff44b5f2ce27adfb085
+      internalID: 1425859958
       vertices: []
       indices: 
       edges: []
@@ -275,10 +275,10 @@ TextureImporter:
       name: Long Range Stab_8
       rect:
         serializedVersion: 2
-        x: 628
-        y: 1
-        width: 74
-        height: 19
+        x: 624
+        y: 0
+        width: 78
+        height: 24
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -286,8 +286,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 045316f831350f143a523228ac5f2bc0
-      internalID: -519196466
+      spriteID: a7395b54438cde242b543bea49198d2d
+      internalID: 2108820439
       vertices: []
       indices: 
       edges: []
@@ -296,10 +296,10 @@ TextureImporter:
       name: Long Range Stab_9
       rect:
         serializedVersion: 2
-        x: 719
+        x: 702
         y: 0
-        width: 60
-        height: 19
+        width: 78
+        height: 24
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -307,8 +307,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8e095f8c177e5554eb87cc03a8ab529b
-      internalID: 872108437
+      spriteID: b8937a852900def45ab243dfdb4e7948
+      internalID: 691092989
       vertices: []
       indices: 
       edges: []
@@ -317,10 +317,10 @@ TextureImporter:
       name: Long Range Stab_10
       rect:
         serializedVersion: 2
-        x: 797
+        x: 780
         y: 0
-        width: 59
-        height: 20
+        width: 78
+        height: 24
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -328,8 +328,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b698e5f9b5ae3a34eacb1d0cd11fff76
-      internalID: -426908641
+      spriteID: ba8bd8e6cda165540959a3d572f26706
+      internalID: -1828800126
       vertices: []
       indices: 
       edges: []
@@ -338,10 +338,10 @@ TextureImporter:
       name: Long Range Stab_11
       rect:
         serializedVersion: 2
-        x: 875
+        x: 858
         y: 0
-        width: 57
-        height: 20
+        width: 78
+        height: 24
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -349,8 +349,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4daf9ac78cd42d645b48a9797150d3c4
-      internalID: 495403394
+      spriteID: 6ff391971a5911346be1e93d630e13cb
+      internalID: 2125005531
       vertices: []
       indices: 
       edges: []
@@ -359,10 +359,10 @@ TextureImporter:
       name: Long Range Stab_12
       rect:
         serializedVersion: 2
-        x: 953
+        x: 936
         y: 0
-        width: 26
-        height: 19
+        width: 78
+        height: 24
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -370,8 +370,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2cbbce3516b7b914d82aec1fb8cfc1f2
-      internalID: 508255041
+      spriteID: 67a19c5737616b942aa1c3647cceda7e
+      internalID: 482952562
       vertices: []
       indices: 
       edges: []
