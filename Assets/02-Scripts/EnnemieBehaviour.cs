@@ -43,49 +43,49 @@ public class EnnemieBehaviour : MonoBehaviour
         healthbar.SetActive(false);
 
     }
-    public Vector2 Closest()
-    {
+    //public Vector2 Closest()
+    //{
 
-        List<Vector2> pos = new List<Vector2>();
-        var vect = VectorHelper.vectorInt(PlayerMovement.points.transform.position);
-        var vect1 = VectorHelper.vectorInt(point.transform.position);
-        for (int i = -ennemie.rangewide / 2; i <= ennemie.rangewide / 2; i++)
-        {
-            pos.Add(vect + new Vector2(0, ennemie.range + i));
-            pos.Add(vect + new Vector2(0, -ennemie.range + i));
-            pos.Add(vect + new Vector2(-ennemie.range + i, 0));
-            pos.Add(vect + new Vector2(ennemie.range + i, 0));
-        }
-        if (pos.Contains(vect1))
-        {
-            return vect1;
-        }
-        float min = 9999999;
-        var minind = 0;
-        for (int i = 0; i < pos.Count; i++)
-        {
-            var temo = Vector2.Distance(vect1, pos[i]);
-            if (temo < min)
-            {
-                min = temo;
-                minind = i;
-            }
-        }
-        for (int i = 4; i > 0; i--)
-        {
-            if (minind % i == 0)
-            {
-                transform.eulerAngles = new Vector3(0, 0, directions[i - 1]);
-                direction = i;
-            }
-        }
-        if (Vector2.Distance(vect1, vect) < min)
-        {
-            return vect1;
-        }
+    //    List<Vector2> pos = new List<Vector2>();
+    //    var vect = VectorHelper.vectorInt(PlayerMovement.points.transform.position);
+    //    var vect1 = VectorHelper.vectorInt(point.transform.position);
+    //    for (int i = -ennemie.rangewide / 2; i <= ennemie.rangewide / 2; i++)
+    //    {
+    //        pos.Add(vect + new Vector2(0, ennemie.range + i));
+    //        pos.Add(vect + new Vector2(0, -ennemie.range + i));
+    //        pos.Add(vect + new Vector2(-ennemie.range + i, 0));
+    //        pos.Add(vect + new Vector2(ennemie.range + i, 0));
+    //    }
+    //    if (pos.Contains(vect1))
+    //    {
+    //        return vect1;
+    //    }
+    //    float min = 9999999;
+    //    var minind = 0;
+    //    for (int i = 0; i < pos.Count; i++)
+    //    {
+    //        var temo = Vector2.Distance(vect1, pos[i]);
+    //        if (temo < min)
+    //        {
+    //            min = temo;
+    //            minind = i;
+    //        }
+    //    }
+    //    for (int i = 4; i > 0; i--)
+    //    {
+    //        if (minind % i == 0)
+    //        {
+    //            transform.eulerAngles = new Vector3(0, 0, directions[i - 1]);
+    //            direction = i;
+    //        }
+    //    }
+    //    if (Vector2.Distance(vect1, vect) < min)
+    //    {
+    //        return vect1;
+    //    }
 
-        return pos[minind];
-    }
+    //    return pos[minind];
+    //}
     private void Update()
     {
         if (body.transform.position == point.transform.position)
@@ -140,9 +140,10 @@ public class EnnemieBehaviour : MonoBehaviour
     public IEnumerator move()
     {
         
-        for (int loop = 0; loop < ennemie.moves; loop++)
+        for (int moveIdx = 0; moveIdx < ennemie.moves; moveIdx++)
         {
             yield return new WaitForSeconds(waittime);
+
             if (wait == false)
             {
                 var vect = VectorHelper.vectorInt(point.transform.position);
@@ -171,7 +172,9 @@ public class EnnemieBehaviour : MonoBehaviour
                         path.Reverse();
 
                         Map.currentRoom.map[VectorHelper.vectorInt(point.transform.position)].block = false;
-                        point.transform.position = VectorHelper.vector2Int2vect3(path[loop].Position);
+                        
+                        point.transform.position = VectorHelper.vector2Int2vect3(path[moveIdx].Position);
+
                         Map.currentRoom.map[VectorHelper.vectorInt(point.transform.position)].block = true;
                         
                         DebugAStar(path);
