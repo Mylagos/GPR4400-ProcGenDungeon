@@ -7,7 +7,7 @@ using UnityEngine;
 public class Map : MonoBehaviour
 {
     //the map
-    static List<List<Room>> map = new List<List<Room>>();
+    public static List<List<Room>> map = new List<List<Room>>();
     //the doors as game object
     public static List<GameObject> doors = new List<GameObject>();
     //keep track of the current room so every script can access it
@@ -62,14 +62,7 @@ public class Map : MonoBehaviour
     private Exit[] exits = new Exit[4];
     public static Exit[] exitstatic = new Exit[4];
 
-    public void move(Vector2Int newPosition,Vector2 player = default(Vector2))
-    {
-        
-        if (map[(currentRoom.position + newPosition).x][(currentRoom.position + newPosition).y] != null)
-        {
-            StartCoroutine(moove(newPosition, player));
-        }
-    }
+    //not animated
     //animated 
     IEnumerator moove(Vector2Int finalpos,Vector2 player)
     {
@@ -81,6 +74,7 @@ public class Map : MonoBehaviour
         pos.Add(new Vector2Int(0, -1), new Vector3(0, -8, -10));
         pos.Add(new Vector2Int(1, 0), new Vector3(14, 0, -10));
         pos.Add(new Vector2Int(-1, 0), new Vector3(-14, 0, -10));
+
         temp.background.transform.position = (Vector2)pos[finalpos];
         temp.setActive(true);
         while (gameObject.transform.position != pos[finalpos])
@@ -641,9 +635,24 @@ public class Room
                     //print(map[currentRoom.x][currentRoom.y].father);
                 }
             }
+            List<Vector2Int> newdirs = new List<Vector2Int>() { new Vector2Int(0, 1), new Vector2Int(0, -1), new Vector2Int(1, 0), new Vector2Int(-1, 0) };
             for (int i = 0; i < done.Count; i++)
             {
-                Map.exitstatic[done[i]].sprites[0].SetActive(true);
+                try
+                {
+                    Debug.Log("do i even care to you");
+                    var temp = Map.map[position.x + newdirs[done[i]].x][position.y + newdirs[done[i]].y];
+                    if (temp == null)
+                    {
+                        Map.exitstatic[done[i]].sprites[Map.exitstatic[done[i]].sprites.Count-1].SetActive(true);
+                    }
+                    else
+                    {
+                        Map.exitstatic[done[i]].sprites[0].SetActive(true);
+                    }
+                }
+                catch { Map.exitstatic[done[i]].sprites[Map.exitstatic[done[i]].sprites.Count - 1].SetActive(true); }
+               
             }
         }
         else
@@ -662,7 +671,7 @@ public class Room
 public class Exit
 {
     public string name;
-    //mur-bas-couloir-haut
+    //mur-bas-couloir-haut-rien
     //mur-escalier(haut ou bas)-couloir-rien
     public List<GameObject> sprites;
 
