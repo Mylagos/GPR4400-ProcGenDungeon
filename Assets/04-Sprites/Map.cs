@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class Map : MonoBehaviour
 {
@@ -61,7 +62,9 @@ public class Map : MonoBehaviour
     [SerializeField]
     private Exit[] exits = new Exit[4];
     public static Exit[] exitstatic = new Exit[4];
-
+    [SerializeField]
+    private EdouardATord[] redraw_non_static = new EdouardATord[4];
+    public static EdouardATord[] redraw = new EdouardATord[4];
     //not animated
     //animated 
     IEnumerator moove(Vector2Int finalpos,Vector2 player)
@@ -93,6 +96,7 @@ public class Map : MonoBehaviour
     {
         cube = Cube;
         exitstatic = exits;
+        redraw = redraw_non_static;
         currentlevel = currentLevel;
         //reset static variables
         map = new List<List<Room>>();
@@ -532,7 +536,9 @@ public class Room
     public void setActive(bool enable)
     {
 
-       
+        bool[] isthere = { false, false, false, false };
+        Tilemap map = null;
+
         if (enable == true)
         {
             
@@ -565,12 +571,20 @@ public class Room
                         Map.doors[i].SetActive(true);
                         switch (i, height - enfants[k].height)
                         {
-                            //couloir haut bas:
-                            case (<2,0):
+                            //couloir haut:
+                            case (0,0):
+                                isthere[i] = true;
+                                map = Map.exitstatic[i].sprites[2].transform.GetChild(0).GetChild(0).GetComponent<Tilemap>();
+                                Map.exitstatic[i].sprites[2].SetActive(true);
+                                break;
+                            //couloir bas:
+                            case ( 1, 0):
                                 Map.exitstatic[i].sprites[2].SetActive(true);
                                 break;
                             //monte haut
                             case (0, <0):
+                                map = Map.exitstatic[i].sprites[1].transform.GetChild(0).GetChild(0).GetComponent<Tilemap>();
+                                isthere[i] = true;
                                 Map.exitstatic[i].sprites[1].SetActive(true);
                                 break;
                             //descend bas
@@ -578,18 +592,18 @@ public class Room
                                 Map.exitstatic[i].sprites[1].SetActive(true);
                                 break;
                             //couloir gauche droite
-                            case (2, 0):
-                                Map.exitstatic[i].sprites[2].SetActive(true);
-                                break;
                             case ( >1,0):
+                                isthere[i] = true;
                                 Map.exitstatic[i].sprites[2].SetActive(true);
                                 break;
                             //haut gauche droite
                             case ( > 1, <0):
+                                isthere[i] = true;
                                 Map.exitstatic[i].sprites[3].SetActive(true);
                                 break;
                             //bas gauche droite
                             case ( > 1, > 0):
+                                isthere[i] = true;
                                 Map.exitstatic[i].sprites[1].SetActive(true);
                                 break;
                         }
@@ -603,12 +617,20 @@ public class Room
                         Map.doors[i].SetActive(true);
                         switch (i, height - father.height)
                         {
-                            //couloir haut bas:
-                            case ( < 2, 0):
+                            //couloir haut:
+                            case (0, 0):
+                                isthere[i] = true;
+                                map = Map.exitstatic[i].sprites[2].transform.GetChild(0).GetChild(0).GetComponent<Tilemap>();
+                                Map.exitstatic[i].sprites[2].SetActive(true);
+                                break;
+                            //couloir bas:
+                            case (1, 0):
                                 Map.exitstatic[i].sprites[2].SetActive(true);
                                 break;
                             //monte haut
                             case (0, < 0):
+                                map = Map.exitstatic[i].sprites[1].transform.GetChild(0).GetChild(0).GetComponent<Tilemap>();
+                                isthere[i] = true;
                                 Map.exitstatic[i].sprites[1].SetActive(true);
                                 break;
                             //descend bas
@@ -617,14 +639,17 @@ public class Room
                                 break;
                             //couloir gauche droite
                             case ( > 1, 0):
+                                isthere[i] = true;
                                 Map.exitstatic[i].sprites[2].SetActive(true);
                                 break;
                             //haut gauche droite
                             case ( > 1, < 0):
+                                isthere[i] = true;
                                 Map.exitstatic[i].sprites[3].SetActive(true);
                                 break;
                             //bas gauche droite
-                            default:
+                            case ( > 1, > 0):
+                                isthere[i] = true;
                                 Map.exitstatic[i].sprites[1].SetActive(true);
                                 break;
                         }
@@ -636,23 +661,75 @@ public class Room
                 }
             }
             List<Vector2Int> newdirs = new List<Vector2Int>() { new Vector2Int(0, 1), new Vector2Int(0, -1), new Vector2Int(1, 0), new Vector2Int(-1, 0) };
+           
             for (int i = 0; i < done.Count; i++)
             {
                 try
                 {
-                    Debug.Log("do i even care to you");
                     var temp = Map.map[position.x + newdirs[done[i]].x][position.y + newdirs[done[i]].y];
                     if (temp == null)
                     {
                         Map.exitstatic[done[i]].sprites[Map.exitstatic[done[i]].sprites.Count-1].SetActive(true);
+                        if (done[i] == 0)
+                        {
+                            map = Map.exitstatic[done[i]].sprites[Map.exitstatic[done[i]].sprites.Count - 1].transform.GetChild(0).GetChild(0).GetComponent<Tilemap>();
+                        }
                     }
                     else
                     {
                         Map.exitstatic[done[i]].sprites[0].SetActive(true);
+                        isthere[done[i]] = true;
+                        if (done[i] == 0)
+                        {
+                            map = Map.exitstatic[done[i]].sprites[0].transform.GetChild(0).GetChild(0).GetComponent<Tilemap>();
+                        }
                     }
                 }
-                catch { Map.exitstatic[done[i]].sprites[Map.exitstatic[done[i]].sprites.Count - 1].SetActive(true); }
-               
+                catch { Map.exitstatic[done[i]].sprites[Map.exitstatic[done[i]].sprites.Count - 1].SetActive(true);
+                    if (done[i] == 0)
+                    {
+                        map = Map.exitstatic[done[i]].sprites[Map.exitstatic[done[i]].sprites.Count - 1].transform.GetChild(0).GetChild(0).GetComponent<Tilemap>();
+                    }
+                }
+            }
+            if (isthere[0])
+            {
+                //1 =droite rien, 2 = droite tout, 3  = gauche rien; 4 = gauche tout;
+                if (isthere[2])
+                {
+                    use_EdouardATord(map,Map.redraw[0]);
+                }
+                else
+                {
+                    use_EdouardATord(map, Map.redraw[1]);
+                }
+                if (isthere[3])
+                {
+                    use_EdouardATord(map, Map.redraw[2]);
+                }
+                else
+                {
+                    use_EdouardATord(map, Map.redraw[3]);
+                }
+            }
+            else
+            {
+                if (isthere[2])
+                {
+                    use_EdouardATord(map, Map.redraw[4]);
+                }
+                else
+                {
+                    use_EdouardATord(map, Map.redraw[5]);
+                }
+                if (isthere[3])
+                {
+                    use_EdouardATord(map, Map.redraw[6]);
+                }
+                else
+                {
+                    use_EdouardATord(map, Map.redraw[7]);
+                }
             }
         }
         else
@@ -666,6 +743,13 @@ public class Room
         //}
 
     }
+    void use_EdouardATord(Tilemap map,EdouardATord ilavrmtord)
+    {
+        for (int i = 0; i < ilavrmtord.tilePositions.Count; i++)
+        {
+            map.SetTile(ilavrmtord.tilePositions[i], ilavrmtord.tiles[i]);
+        }
+    }
 }
 [System.Serializable]
 public class Exit
@@ -677,6 +761,12 @@ public class Exit
 
 }
 
+[System.Serializable]
+public class EdouardATord
+{
+    public List<TileBase> tiles;
+    public List<Vector3Int> tilePositions;
+}
 public class Tile 
 {
     public Vector2 position;

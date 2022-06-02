@@ -1671,6 +1671,48 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: TX Tileset Wall_61
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 365
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 81cb13fd4b13e44f3a3818bd82eadd68
+      internalID: -56454117
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TX Tileset Wall_62
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 365
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5fb9f949280344008b10be6cdc18fed8
+      internalID: -347667858
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -1703,7 +1745,9 @@ TextureImporter:
       TX Tileset Wall_58: 21300116
       TX Tileset Wall_20: 21300040
       TX Tileset Wall_51: 21300102
+      TX Tileset Wall_62: -347667858
       TX Tileset Wall_45: 21300090
+      TX Tileset Wall_61: -56454117
       TX Tileset Wall_0: 21300000
       TX Tileset Wall_15: 21300030
       TX Tileset Wall_1: 21300002
