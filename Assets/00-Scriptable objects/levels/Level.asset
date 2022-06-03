@@ -29,4 +29,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 4fb6886f9f938441faed16e91e5c82fa, type: 2}
   backgrounds: []
   RoomTypes: []
-  ennemiesAmmount: {x: 1, y: 1}
+  ennemiesAmmount: {x: 1, y: 5}
