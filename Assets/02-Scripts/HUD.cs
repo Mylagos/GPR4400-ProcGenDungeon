@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -54,7 +55,9 @@ public class HUD : MonoBehaviour
     private void SetPlayerPins()
     {
         int playerMoves = _player.moves;
-        //int playerAttack = _player.attack;
+        int playerAttack = _player.attack;
+        if (_player.moves_ammount < 4)
+            _pinMov4.SetActive(false);
 
         _pinAtk.transform.GetComponent<Image>().sprite = _attackPinOff;
 
@@ -64,26 +67,28 @@ public class HUD : MonoBehaviour
         _pinMov3.GetComponent<Image>().sprite = _movementPinOff;
         _pinMov4.GetComponent<Image>().sprite = _movementPinOff;
 
-        if (!(0 == 0))
+        if (!(_player.attack == 0))
         {
-            _pinAtk.SetActive(true);
+            _pinAtk.transform.GetComponent<Image>().sprite = _attackPinOn;
         }
 
-        if (playerMoves >= 0)
+        Debug.Log(_player.moves);
+
+        if (_player.moves >= 0)
         {
-            _pinMov1.SetActive(true);
+            _pinMov1.GetComponent<Image>().sprite = _movementPinOn;
         }
-        if (playerMoves >= 1)
+        if (_player.moves >= 1)
         {
-            _pinMov2.SetActive(true);
+            _pinMov2.GetComponent<Image>().sprite = _movementPinOn;
         }
-        if (playerMoves >= 2)
+        if (_player.moves >= 2)
         {
-            _pinMov3.SetActive(true);
+            _pinMov3.GetComponent<Image>().sprite = _movementPinOn;
         }
-        if (playerMoves >= 3)
+        if (_player.moves >= 3)
         {
-            _pinMov4.SetActive(true);
+            _pinMov4.GetComponent<Image>().sprite = _movementPinOn;
         }
     }
 }
