@@ -52,6 +52,7 @@ public class WeaponBehaviour : MonoBehaviour
     public void setAttack(int pos)
     {
         print(currentAttacks.Count);
+        print(pos);
         currentAttacks.Add(new Attack(posibilities[pos], transform.position,me,WhoDammage));
     }
     public void Update()

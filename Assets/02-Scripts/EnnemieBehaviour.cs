@@ -10,7 +10,7 @@ public class EnnemieBehaviour : MonoBehaviour
     private GameObject point;
     [SerializeField]
     private GameObject body;
-
+    Animator anime;
     //stats
     [SerializeField]
     private float speed;
@@ -18,7 +18,6 @@ public class EnnemieBehaviour : MonoBehaviour
     public float life;
     [SerializeField]
     public float damage;
-    int[] directions = { 0, 90, 180, 270 };
     public float currentLife;
     bool wait;
     public GameObject healthbar;
@@ -29,14 +28,15 @@ public class EnnemieBehaviour : MonoBehaviour
     public float waittime;
     public bool animeAstar;
     List<GameObject> pathobject = new List<GameObject>();
+    List<Vector2> directions = new List<Vector2>() { new Vector2(0, 1), new Vector2(0, -1), new Vector2(1, 0),new Vector2(-1, 0) };
     private void Awake()
     {
-       
+        
         currentLife = life;
         point = transform.GetChild(0).gameObject;
         body = transform.GetChild(1).gameObject;
         arm = transform.GetChild(1).GetComponent<WeaponBehaviour>();
-
+        anime = body.transform.GetChild(0).GetComponent<Animator>();
         // - new Vector3(0,1)to the ennemies;
         healthbar = Instantiate(GameObject.Find("healthbar"), gameObject.transform.GetChild(1).transform.position - new Vector3(0, 1), Quaternion.identity, GameObject.Find("Canvas").transform);
         healthbar.GetComponent<Healthbar>().Father = gameObject;
@@ -99,6 +99,7 @@ public class EnnemieBehaviour : MonoBehaviour
         }
         if (PlayerMovement.Turn>0)
         {
+
             var vect = VectorHelper.vectorInt(point.transform.position);
             for (int i = 0; i < Map.currentRoom.map[vect].attacks.Count; i++)
             {
@@ -146,72 +147,94 @@ public class EnnemieBehaviour : MonoBehaviour
             {
                 vect = new Vector3(Mathf.Abs(recule.x) / recule.x, Mathf.Abs(recule.y) / recule.y);
             }
+           
             Map.currentRoom.map[VectorHelper.vectorInt((Vector2)point.transform.position)].block = false;
             point.transform.position += vect;
             Map.currentRoom.map[VectorHelper.vectorInt((Vector2)point.transform.position)].block = true;
+           
             while (body.transform.position != point.transform.position)
             {
+                anime.SetBool("damaged", true);
                 body.transform.position = Vector2.MoveTowards(body.transform.position, point.transform.position, speed * Time.deltaTime);
                 yield return new WaitForEndOfFrame();
             }
+            anime.SetBool("damaged", false);
         }
-        yield return new WaitForEndOfFrame();
-
         yield return new WaitForEndOfFrame();
 
     }
     //return a Cheap as fock Path Finding
     public IEnumerator move()
     {
+        anime.SetBool("walk", true);
         var path = AStarPathFinder.GeneratePath(Map.currentRoom.AstarMapVector2Int(), VectorHelper.vector2Int(point.transform.position), VectorHelper.vector2Int(PlayerMovement.points.transform.position));
         path.Reverse();
         for (int moveIdx = 0; moveIdx < ennemie.moves; moveIdx++)
         {
+            
             yield return new WaitForSeconds(waittime);
-
             if (wait == false)
             {
-               
+
                 //if (closest != vect)
                 //{
                 //var past = pasta.Bestpasta(closest, body.transform.position);
                 //TO DO : var past = astart(PlayerMovement.points.transform.position, body.transform.position);
-               
-                    if (!isMoving)
+
+                if (!isMoving)
+                {
+                    //try to move, if he cant he shoot;
+                    try
                     {
-                        //try to move, if he cant he shoot;
+
+                        direction = directions.IndexOf( (Vector2)VectorHelper.vector2Int2vect3(path[moveIdx].Position)- VectorHelper.vectorInt(point.transform.position) );
+                 
+                        if (direction == 3)
+                        {
+                            body.transform.GetChild(0).localScale = new Vector3(-1.5f, 1.5f);
+                        }
+                        else if(direction ==2)
+                        {
+                            body.transform.GetChild(0).localScale = new Vector3(1.5f, 1.5f);
+                        }
+                       
+                        Map.currentRoom.map[VectorHelper.vectorInt(point.transform.position)].block = false;
+                        point.transform.position = VectorHelper.vector2Int2vect3(path[moveIdx].Position);
+                        Map.currentRoom.map[VectorHelper.vectorInt(point.transform.position)].block = true;
+                        if (animeAstar)
+                        {
+                            DebugAStar(path);
+                        }
+
+                    }
+                    catch
+                    {
                         try
                         {
-                           
-
-                            Map.currentRoom.map[VectorHelper.vectorInt(point.transform.position)].block = false;
-                            point.transform.position = VectorHelper.vector2Int2vect3(path[moveIdx].Position);
-                            Map.currentRoom.map[VectorHelper.vectorInt(point.transform.position)].block = true;
-                            if (animeAstar)
-                            {
-                                DebugAStar(path);
-                            }
-                           
-                        }
-                        catch
-                        {
+                            direction = directions.IndexOf(VectorHelper.vector2Int(PlayerMovement.points.transform.position) - VectorHelper.vectorInt(point.transform.position));
                             arm.setAttack(direction);
                         }
-                     
-                    
+                        catch { }
+                       
+                    }
+
+
 
                 }
 
                 while (body.transform.position != point.transform.position)
                 {
+                   
                     body.transform.position = Vector2.MoveTowards(body.transform.position, point.transform.position, speed * Time.deltaTime);
                     yield return new WaitForEndOfFrame();
                 }
+                
 
 
             }
         }
         PlayerMovement.step_by_step = true;
+        anime.SetBool("walk", false);
     }
 
     private void DebugAStar(List<AStarNode> path)
