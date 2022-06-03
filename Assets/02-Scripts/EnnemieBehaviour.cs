@@ -106,7 +106,7 @@ public class EnnemieBehaviour : MonoBehaviour
                 {
                     var attack = Map.currentRoom.map[vect].attacks[i];
 
-                    SetDammages(attack.initialPosition, attack.weapon.Dammage.x);
+                    StartCoroutine(SetDammages(attack.initialPosition, attack.weapon.Dammage.x));
 
 
                 }
@@ -149,7 +149,13 @@ public class EnnemieBehaviour : MonoBehaviour
             Map.currentRoom.map[VectorHelper.vectorInt((Vector2)point.transform.position)].block = false;
             point.transform.position += vect;
             Map.currentRoom.map[VectorHelper.vectorInt((Vector2)point.transform.position)].block = true;
+            while (body.transform.position != point.transform.position)
+            {
+                body.transform.position = Vector2.MoveTowards(body.transform.position, point.transform.position, speed * Time.deltaTime);
+                yield return new WaitForEndOfFrame();
+            }
         }
+        yield return new WaitForEndOfFrame();
 
         yield return new WaitForEndOfFrame();
 
