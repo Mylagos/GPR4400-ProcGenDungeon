@@ -47489,9 +47489,29 @@ PrefabInstance:
       propertyPath: _player
       value: 
       objectReference: {fileID: 1533572427}
+    - target: {fileID: 4148814275760508582, guid: 1795606bd374f9a4890b2d57c1b19051, type: 3}
+      propertyPath: _attackPinOn
+      value: 
+      objectReference: {fileID: -1254282489, guid: 71389a4ba3b8047c2877570c5252a59a, type: 3}
+    - target: {fileID: 4148814275760508582, guid: 1795606bd374f9a4890b2d57c1b19051, type: 3}
+      propertyPath: _attackPinOff
+      value: 
+      objectReference: {fileID: 2087710643, guid: 71389a4ba3b8047c2877570c5252a59a, type: 3}
+    - target: {fileID: 4148814275760508582, guid: 1795606bd374f9a4890b2d57c1b19051, type: 3}
+      propertyPath: _movementPinOn
+      value: 
+      objectReference: {fileID: -1713499856, guid: 71389a4ba3b8047c2877570c5252a59a, type: 3}
+    - target: {fileID: 4148814275760508582, guid: 1795606bd374f9a4890b2d57c1b19051, type: 3}
+      propertyPath: _movementPinOff
+      value: 
+      objectReference: {fileID: -2043832356, guid: 71389a4ba3b8047c2877570c5252a59a, type: 3}
     - target: {fileID: 4148814275760508583, guid: 1795606bd374f9a4890b2d57c1b19051, type: 3}
       propertyPath: m_Name
       value: Canvas
       objectReference: {fileID: 0}
+    - target: {fileID: 4148814276651747773, guid: 1795606bd374f9a4890b2d57c1b19051, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -1254282489, guid: 71389a4ba3b8047c2877570c5252a59a, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1795606bd374f9a4890b2d57c1b19051, type: 3}
