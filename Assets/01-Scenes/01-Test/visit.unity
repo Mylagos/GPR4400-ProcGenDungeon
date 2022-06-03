@@ -11438,7 +11438,16 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: -1254282489, guid: 71389a4ba3b8047c2877570c5252a59a, type: 3}
-    m_RemovedComponents: []
+    - target: {fileID: 4148814276754281238, guid: 1795606bd374f9a4890b2d57c1b19051, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4148814276758644768, guid: 1795606bd374f9a4890b2d57c1b19051, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 4148814275760508582, guid: 1795606bd374f9a4890b2d57c1b19051, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 1795606bd374f9a4890b2d57c1b19051, type: 3}
 --- !u!224 &483108507 stripped
 RectTransform:
@@ -34436,11 +34445,12 @@ MonoBehaviour:
   point: {fileID: 1928014645}
   ymax: {x: -4, y: 4}
   xmax: {x: -7, y: 7}
+  attack: 1
   moves_ammount: 3
   GUI: {fileID: 1050768423}
   normal: {fileID: 11400000, guid: e500c5e1ffd7e9d468cd8c805064e1bd, type: 2}
   moves: 0
-  attack: 1
+  notdraw: 1
   voile: {fileID: 129254293}
   RoomChangeAnimations:
   - name: haut couloir

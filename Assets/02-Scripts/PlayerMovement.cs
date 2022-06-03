@@ -33,7 +33,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector2Int ymax;
     [SerializeField]
     private Vector2Int xmax;
-
+    public bool attack = true;
     public int moves_ammount;
     public Tilemap GUI;
     public TileBase normal;
@@ -49,10 +49,10 @@ public class PlayerMovement : MonoBehaviour
     public static Vector2 positiion;
     public static int Turn = 0;
     public static bool IsMooving;
-    public bool attack = true;    
+    
     public static bool step_by_step;
     bool canmove = true;
-
+    public bool notdraw;
     public SpriteRenderer voile;
     //List<Animation> --> haut : 0 couloir,  1 monte; bas : 2 descend, 3 couloir; droite : 4 descend,5 couloir,  6 monte; gauche : 4 descend,5 couloir,  6 monte;
     public List<RoomChangeAnimationData> RoomChangeAnimations;
@@ -103,11 +103,15 @@ public class PlayerMovement : MonoBehaviour
                     yield return new WaitForEndOfFrame();
                 }
             }
+            attack = true;
             canmove = true;
             moves = moves_ammount;
-            attack = true;
         }
-        DrawPossibleMoves();
+        if (!notdraw)
+        {
+            DrawPossibleMoves();
+        }
+        
     }
     IEnumerator RoomChangeAnimation(Vector2 newpos,Vector2Int newdir)
     {
@@ -358,7 +362,7 @@ public class PlayerMovement : MonoBehaviour
         //    }
         //}
         //Attack the ennemies in front of the player
-        if (_input.actions["Attack"].triggered && !IsMooving && attack)
+        if (_input.actions["Attack"].triggered && !IsMooving && attack && !notdraw)
         {
             arm.setAttack(direction);
             Turn = 1;
@@ -375,6 +379,7 @@ public class PlayerMovement : MonoBehaviour
         }
         if (canmove)
         {
+            
             transform.position = Vector2.MoveTowards(transform.position, point.transform.position, speed * Time.deltaTime);
             anime.SetBool("walk", IsMooving);
         }
