@@ -453,7 +453,7 @@ public class Room
         background.SetActive(false);
         for (int i = 0; i < Random.Range(Map.currentlevel.ennemiesAmmount.x, Map.currentlevel.ennemiesAmmount.y); i++)
         {
-            var vect = new Vector3(Random.Range(-7, 7), Random.Range(4, -4));
+            var vect = new Vector3(Random.Range(-6, 6), Random.Range(3, -3));
             var temo = GameObject.Instantiate(ennemies[Random.Range(0, ennemies.Count)].me, vect, Quaternion.identity);
             temo.transform.parent = this.background.transform;
             this.ennemies.Add(temo);
