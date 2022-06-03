@@ -456,7 +456,7 @@ public class Room
             var vect = new Vector3(Random.Range(-7, 7), Random.Range(4, -4));
             var temo = GameObject.Instantiate(ennemies[Random.Range(0, ennemies.Count)].me, vect, Quaternion.identity);
             temo.transform.parent = this.background.transform;
-            //temo.SetActive(false);
+            temo.SetActive(false);
             this.ennemies.Add(temo);
             map[vect].block = true;
 
