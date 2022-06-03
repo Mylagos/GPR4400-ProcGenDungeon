@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEngine.UI;
 
 public class HUD : MonoBehaviour
 {
@@ -54,16 +54,17 @@ public class HUD : MonoBehaviour
     private void SetPlayerPins()
     {
         int playerMoves = _player.moves;
-        int playerAttack = _player.attack;
+        //int playerAttack = _player.attack;
 
-        _pinAtk.GetComponent<Image>().sprite = _attackPinOff;
+        _pinAtk.transform.GetComponent<Image>().sprite = _attackPinOff;
+
         Debug.Log("ooo");
-        /*_pinMov1.GetComponent<Image>().sprite = _attackPinOff;
-        _pinMov2.GetComponent<Image>().sprite = _attackPinOff;
-        _pinMov3.GetComponent<Image>().sprite = _attackPinOff;
-        _pinMov4.GetComponent<Image>().sprite = _attackPinOff;
+        _pinMov1.GetComponent<Image>().sprite = _movementPinOff;
+        _pinMov2.GetComponent<Image>().sprite = _movementPinOff;
+        _pinMov3.GetComponent<Image>().sprite = _movementPinOff;
+        _pinMov4.GetComponent<Image>().sprite = _movementPinOff;
 
-        if (!(playerAttack == 0))
+        if (!(0 == 0))
         {
             _pinAtk.SetActive(true);
         }
@@ -83,6 +84,6 @@ public class HUD : MonoBehaviour
         if (playerMoves >= 3)
         {
             _pinMov4.SetActive(true);
-        }*/
+        }
     }
 }
