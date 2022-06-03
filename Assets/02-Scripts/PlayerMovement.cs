@@ -59,7 +59,7 @@ public class PlayerMovement : MonoBehaviour
    
     private void Start()
     {
-        anime = GetComponent<Animator>();
+        anime = transform.GetChild(0).GetComponent<Animator>();
         moves = moves_ammount;
         arm = GetComponent<WeaponBehaviour>();
         //set the static variable so that other script can access it
@@ -84,7 +84,13 @@ public class PlayerMovement : MonoBehaviour
         GUI.ClearAllTiles();
         if (moves == 0)
         {
+            while (transform.position != point.transform.position)
+            {
+                yield return new WaitForEndOfFrame();
+            }
+            anime.SetBool("walk", false);
             canmove = false;
+            IsMooving = false;
             step_by_step = false;
             foreach (GameObject obj in Map.currentRoom.ennemies)
             {
@@ -320,7 +326,7 @@ public class PlayerMovement : MonoBehaviour
 
 
         List<string> InputMouvementsNames = new List<string>() {"up", "down", "right","left" };
-        int[] tem = { 2, 0, 1,3 };
+        //int[] tem = { 2, 0, 1,3 };
         //A turn passes
         if (Turn > 0)
         {
@@ -347,7 +353,7 @@ public class PlayerMovement : MonoBehaviour
         //Attack the ennemies in front of the player
         if (_input.actions["Attack"].triggered && !IsMooving)
         {
-            arm.setAttack(tem[direction]);
+            arm.setAttack(direction);
             Turn = 1;
         }
        
