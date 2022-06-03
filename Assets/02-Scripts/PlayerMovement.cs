@@ -49,7 +49,7 @@ public class PlayerMovement : MonoBehaviour
     public static Vector2 positiion;
     public static int Turn = 0;
     public static bool IsMooving;
-    
+    public bool attack = true;    
     public static bool step_by_step;
     bool canmove = true;
 
@@ -105,6 +105,7 @@ public class PlayerMovement : MonoBehaviour
             }
             canmove = true;
             moves = moves_ammount;
+            attack = true;
         }
         DrawPossibleMoves();
     }
@@ -357,10 +358,11 @@ public class PlayerMovement : MonoBehaviour
         //    }
         //}
         //Attack the ennemies in front of the player
-        if (_input.actions["Attack"].triggered && !IsMooving)
+        if (_input.actions["Attack"].triggered && !IsMooving && attack)
         {
             arm.setAttack(direction);
             Turn = 1;
+            attack = false;
         }
        
         if (transform.position == point.transform.position)

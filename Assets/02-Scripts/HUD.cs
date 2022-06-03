@@ -54,8 +54,6 @@ public class HUD : MonoBehaviour
 
     private void SetPlayerPins()
     {
-        int playerMoves = _player.moves;
-        int playerAttack = _player.attack;
         if (_player.moves_ammount < 4)
             _pinMov4.SetActive(false);
 
@@ -67,26 +65,26 @@ public class HUD : MonoBehaviour
         _pinMov3.GetComponent<Image>().sprite = _movementPinOff;
         _pinMov4.GetComponent<Image>().sprite = _movementPinOff;
 
-        if (!(_player.attack == 0))
+        if (_player.attack == true)
         {
             _pinAtk.transform.GetComponent<Image>().sprite = _attackPinOn;
         }
 
         Debug.Log(_player.moves);
 
-        if (_player.moves >= 0)
+        if (_player.moves >= 1)
         {
             _pinMov1.GetComponent<Image>().sprite = _movementPinOn;
         }
-        if (_player.moves >= 1)
+        if (_player.moves >= 2)
         {
             _pinMov2.GetComponent<Image>().sprite = _movementPinOn;
         }
-        if (_player.moves >= 2)
+        if (_player.moves >= 3)
         {
             _pinMov3.GetComponent<Image>().sprite = _movementPinOn;
         }
-        if (_player.moves >= 3)
+        if (_player.moves >= 4)
         {
             _pinMov4.GetComponent<Image>().sprite = _movementPinOn;
         }
