@@ -151,6 +151,8 @@ public class EnnemieBehaviour : MonoBehaviour
             Map.currentRoom.map[VectorHelper.vectorInt((Vector2)point.transform.position)].block = true;
         }
 
+        yield return new WaitForEndOfFrame();
+
     }
     //return a Cheap as fock Path Finding
     public IEnumerator move()

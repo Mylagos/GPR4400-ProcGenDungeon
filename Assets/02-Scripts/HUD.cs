@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class HUD : MonoBehaviour
 {
@@ -12,6 +13,11 @@ public class HUD : MonoBehaviour
     [SerializeField] private GameObject _healthMask;
     [SerializeField] private GameObject _healthBar;
     private float _maskPositionEmpty = -240f;
+
+    [SerializeField] private Sprite _attackPinOn;
+    [SerializeField] private Sprite _attackPinOff;
+    [SerializeField] private Sprite _movementPinOn;
+    [SerializeField] private Sprite _movementPinOff;
 
     [SerializeField] private GameObject _pinAtk;
     [SerializeField] private GameObject _pinMov1;
@@ -31,7 +37,7 @@ public class HUD : MonoBehaviour
         //Print out the health text
         _healthBarText.text = _player.CurrentHealth.ToString() +"/"+_player.MaxHealth.ToString();
         HealthMaskOffset();
-        SetPlayerPrins();
+        SetPlayerPins();
     }
 
     private void HealthMaskOffset()
@@ -45,16 +51,17 @@ public class HUD : MonoBehaviour
         _healthBar.transform.localPosition = new Vector3(-_maskPositionEmpty + temp, 0, 0);
     }
 
-    private void SetPlayerPrins()
+    private void SetPlayerPins()
     {
         int playerMoves = _player.moves;
         int playerAttack = _player.attack;
 
-        _pinAtk.SetActive(false);
-        _pinMov1.SetActive(false);
-        _pinMov2.SetActive(false);
-        _pinMov3.SetActive(false);
-        _pinMov4.SetActive(false);
+        _pinAtk.GetComponent<Image>().sprite = _attackPinOff;
+        Debug.Log("ooo");
+        /*_pinMov1.GetComponent<Image>().sprite = _attackPinOff;
+        _pinMov2.GetComponent<Image>().sprite = _attackPinOff;
+        _pinMov3.GetComponent<Image>().sprite = _attackPinOff;
+        _pinMov4.GetComponent<Image>().sprite = _attackPinOff;
 
         if (!(playerAttack == 0))
         {
@@ -76,6 +83,6 @@ public class HUD : MonoBehaviour
         if (playerMoves >= 3)
         {
             _pinMov4.SetActive(true);
-        }
+        }*/
     }
 }
