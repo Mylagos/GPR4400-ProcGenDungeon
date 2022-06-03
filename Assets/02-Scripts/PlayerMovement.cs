@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
-
+using UnityEngine.UI;
 public class PlayerMovement : MonoBehaviour
 {
 
@@ -53,7 +53,7 @@ public class PlayerMovement : MonoBehaviour
     public static bool step_by_step;
     bool canmove = true;
     public bool notdraw;
-    public SpriteRenderer voile;
+    public Image voile;
     //List<Animation> --> haut : 0 couloir,  1 monte; bas : 2 descend, 3 couloir; droite : 4 descend,5 couloir,  6 monte; gauche : 4 descend,5 couloir,  6 monte;
     public List<RoomChangeAnimationData> RoomChangeAnimations;
    
@@ -202,10 +202,10 @@ public class PlayerMovement : MonoBehaviour
             }
         }
         //voile baissé
-        for (int i = 0;i<100;i++)
+        for (int i = 0;i<50;i++)
         {
-            voile.color = new Color(0, 0, 0,i/100f);
-            yield return new WaitForSeconds(0.001f);
+            voile.color = new Color(0, 0, 0,i/50f);
+            yield return new WaitForSeconds(0.0005f);
         }
         Map.currentRoom.setActive(false);
         
@@ -215,10 +215,10 @@ public class PlayerMovement : MonoBehaviour
         temp.setActive(true);
         Map.currentRoom = temp;
         //voile levé
-        for (int i = 100; i >= 0; i--)
+        for (int i = 50; i >= 0; i--)
         {
-            voile.color = new Color(0, 0, 0, i / 100f);
-            yield return new WaitForSeconds(0.001f);
+            voile.color = new Color(0, 0, 0, i / 50f);
+            yield return new WaitForSeconds(0.0005f);
         }
         canmove = true;
 
@@ -287,6 +287,8 @@ public class PlayerMovement : MonoBehaviour
         {
             if (deplacement == (Vector2)Map.doors[i].transform.position && Map.doors[i].activeInHierarchy)
             {
+                Map.currentRoom.map[point.transform.position].block = false;
+
                 StartCoroutine(RoomChangeAnimation(newpos[i], newdir[i]));
                 return true;
             }
