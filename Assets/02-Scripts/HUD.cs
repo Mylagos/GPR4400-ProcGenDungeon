@@ -57,14 +57,12 @@ public class HUD : MonoBehaviour
         //int playerAttack = _player.attack;
 
         _pinAtk.transform.GetComponent<Image>().sprite = _attackPinOff;
-
-        Debug.Log("ooo");
         _pinMov1.GetComponent<Image>().sprite = _movementPinOff;
         _pinMov2.GetComponent<Image>().sprite = _movementPinOff;
         _pinMov3.GetComponent<Image>().sprite = _movementPinOff;
         _pinMov4.GetComponent<Image>().sprite = _movementPinOff;
 
-        if (!(0 == 0))
+        if ((0 == 0))
         {
             _pinAtk.SetActive(true);
         }

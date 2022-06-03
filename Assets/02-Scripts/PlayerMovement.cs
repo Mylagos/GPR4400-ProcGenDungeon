@@ -37,9 +37,7 @@ public class PlayerMovement : MonoBehaviour
     public int moves_ammount;
     public Tilemap GUI;
     public TileBase normal;
-
-    [SerializeField] public int moves;
-    [SerializeField] public int attack;
+    public int moves;
     //personnal temp variables
     int direction = 0;
     int[] directions = { 0, 90, 180, 270 };
@@ -295,17 +293,15 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        if (Turn>0)
+        for (int i = 0; i < Map.currentRoom.map[point.transform.position].attacks.Count; i++)
         {
-            for (int i = 0; i < Map.currentRoom.map[point.transform.position].attacks.Count; i++)
+            var attack = Map.currentRoom.map[transform.position].attacks[i];
+            if (attack.whom == 0)
             {
-                var attack = Map.currentRoom.map[transform.position].attacks[i];
-                if (attack.whom == 0)
-                {
-                    SetDammages(attack.initialPosition, attack.weapon.Dammage.x);
-                }
+                SetDammages(attack.initialPosition, attack.weapon.Dammage.x);
             }
         }
+        
         positiion = transform.position;
 
         //IsMooving is false if the player is not moving vice versa
