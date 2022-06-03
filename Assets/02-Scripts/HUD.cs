@@ -13,6 +13,12 @@ public class HUD : MonoBehaviour
     [SerializeField] private GameObject _healthBar;
     private float _maskPositionEmpty = -240f;
 
+    [SerializeField] private GameObject _pinAtk;
+    [SerializeField] private GameObject _pinMov1;
+    [SerializeField] private GameObject _pinMov2;
+    [SerializeField] private GameObject _pinMov3;
+    [SerializeField] private GameObject _pinMov4;
+
 
     void Start()
     {
@@ -25,7 +31,7 @@ public class HUD : MonoBehaviour
         //Print out the health text
         _healthBarText.text = _player.CurrentHealth.ToString() +"/"+_player.MaxHealth.ToString();
         HealthMaskOffset();
-        Debug.Log("ooo");
+        SetPlayerPrins();
     }
 
     private void HealthMaskOffset()
@@ -37,5 +43,39 @@ public class HUD : MonoBehaviour
         tempVec.x = (_maskPositionEmpty -  temp +0.3f);
         _healthMask.transform.localPosition = tempVec;
         _healthBar.transform.localPosition = new Vector3(-_maskPositionEmpty + temp, 0, 0);
+    }
+
+    private void SetPlayerPrins()
+    {
+        int playerMoves = _player.moves;
+        int playerAttack = _player.attack;
+
+        _pinAtk.SetActive(false);
+        _pinMov1.SetActive(false);
+        _pinMov2.SetActive(false);
+        _pinMov3.SetActive(false);
+        _pinMov4.SetActive(false);
+
+        if (!(playerAttack == 0))
+        {
+            _pinAtk.SetActive(true);
+        }
+
+        if (playerMoves >= 0)
+        {
+            _pinMov1.SetActive(true);
+        }
+        if (playerMoves >= 1)
+        {
+            _pinMov2.SetActive(true);
+        }
+        if (playerMoves >= 2)
+        {
+            _pinMov3.SetActive(true);
+        }
+        if (playerMoves >= 3)
+        {
+            _pinMov4.SetActive(true);
+        }
     }
 }

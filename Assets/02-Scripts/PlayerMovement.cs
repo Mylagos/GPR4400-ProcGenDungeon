@@ -37,7 +37,9 @@ public class PlayerMovement : MonoBehaviour
     public int moves_ammount;
     public Tilemap GUI;
     public TileBase normal;
-    public int moves;
+
+    [SerializeField] public int moves;
+    [SerializeField] public int attack;
     //personnal temp variables
     int direction = 0;
     int[] directions = { 0, 90, 180, 270 };
