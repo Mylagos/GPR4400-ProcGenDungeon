@@ -34380,8 +34380,8 @@ MonoBehaviour:
   currentlife: 100
   arm: {fileID: 0}
   point: {fileID: 1928014645}
-  ymax: {x: -5, y: 5}
-  xmax: {x: -8, y: 8}
+  ymax: {x: -4, y: 4}
+  xmax: {x: -7, y: 7}
   moves_ammount: 3
   GUI: {fileID: 1050768423}
   normal: {fileID: 11400000, guid: e500c5e1ffd7e9d468cd8c805064e1bd, type: 2}

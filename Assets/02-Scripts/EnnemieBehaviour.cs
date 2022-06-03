@@ -171,7 +171,6 @@ public class EnnemieBehaviour : MonoBehaviour
         path.Reverse();
         for (int moveIdx = 0; moveIdx < ennemie.moves; moveIdx++)
         {
-            
             yield return new WaitForSeconds(waittime);
             if (wait == false)
             {

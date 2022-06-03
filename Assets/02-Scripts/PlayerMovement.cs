@@ -59,6 +59,7 @@ public class PlayerMovement : MonoBehaviour
    
     private void Start()
     {
+       
         anime = transform.GetChild(0).GetComponent<Animator>();
         moves = moves_ammount;
         arm = GetComponent<WeaponBehaviour>();
@@ -82,6 +83,7 @@ public class PlayerMovement : MonoBehaviour
     IEnumerator Move()
     {
         GUI.ClearAllTiles();
+        moves--;
         if (moves == 0)
         {
             while (transform.position != point.transform.position)
@@ -223,17 +225,22 @@ public class PlayerMovement : MonoBehaviour
         {
             for (int j = -Mathf.Abs(moves - Mathf.Abs(k)); j < Mathf.Abs(moves - Mathf.Abs(k) + 1); j++)
             {
-                GUI.SetTile(new Vector3Int(i, j) + VectorHelper.Vector3Int(point.transform.position) - new Vector3Int(1, 1), normal);
-                GUI.SetTile(new Vector3Int(i, j) + VectorHelper.Vector3Int(point.transform.position) - new Vector3Int(1, 1), normal);
+                var temp = new Vector3Int(i, j) + VectorHelper.Vector3Int(point.transform.position) - new Vector3Int(1, 1);
+                if (temp.y >= ymax.x && temp.y <= ymax.y-2 && temp.x >= xmax.x && temp.x <= xmax.y-2)
+                {
+                    GUI.SetTile(temp, normal);
+                    GUI.SetTile(temp, normal);
+                }
             }
             k--;
         }
-        moves--;
+       
     }
     private void Move(Vector3 deplacement, int dir, bool force = false)
     {
         if (dir == direction || force)
         {
+            var temo = checkDoors(point.transform.position + deplacement);
             if (transform.position == point.transform.position)
             {
                 Vector3 temp = point.transform.position + deplacement;
@@ -244,7 +251,7 @@ public class PlayerMovement : MonoBehaviour
                         Map.currentRoom.map[point.transform.position].block = false;
                         point.transform.position += deplacement;
                         Map.currentRoom.map[point.transform.position].block = true;
-                        if (!checkDoors())
+                        if (!temo)
                         {
                             StartCoroutine(Move());
                         }
@@ -267,13 +274,13 @@ public class PlayerMovement : MonoBehaviour
     }
     //dammages is the direction were the player will be push after taking the damages
     //ammount is the amount of damages taken
-    public bool checkDoors()
+    public bool checkDoors(Vector2 deplacement)
     {
         List<Vector3> newpos = new List<Vector3>() { new Vector3(0, -4), new Vector3(0, 4), new Vector3(-7, 0), new Vector3(7, 0) };
         List<Vector2Int> newdir = new List<Vector2Int>() { new Vector2Int(0, 1), new Vector2Int(0, -1), new Vector2Int(1, 0), new Vector2Int(-1, 0) };
         for (int i = 0; i < 4 && OnDoor == false; i++)
         {
-            if (point.transform.position == Map.doors[i].transform.position && Map.doors[i].activeInHierarchy)
+            if (deplacement == (Vector2)Map.doors[i].transform.position && Map.doors[i].activeInHierarchy)
             {
                 StartCoroutine(RoomChangeAnimation(newpos[i], newdir[i]));
                 return true;
@@ -285,6 +292,7 @@ public class PlayerMovement : MonoBehaviour
     {
         Move(dammages,0,true);
         currentlife -= ammount;
+        Map.currentRoom.map[transform.position].block = false;
         if (currentlife < 0)
         {
             print("sie");
