@@ -35,15 +35,14 @@ public class WeaponBehaviour : MonoBehaviour
                     if (me.mapDammage.GetTile(localPlace).name != "CENTER")
                     {
                         var number = int.Parse(name);
+                        //haut
+                        posibilities[0][number].Add(new Vector2Int(localPlace.y, localPlace.x));
+                        //bas
+                        posibilities[1][number].Add(new Vector2Int(localPlace.y, -localPlace.x));
                         //droite
-                        posibilities[0][number].Add((Vector2Int)localPlace);
+                        posibilities[2][number].Add((Vector2Int)localPlace);
                         //gauche
                         posibilities[3][number].Add(new Vector2Int(-localPlace.x, localPlace.y));
-                        //haut
-                        posibilities[1][number].Add(new Vector2Int(localPlace.y, localPlace.x));
-                        //bas
-                        posibilities[2][number].Add(new Vector2Int(localPlace.y, -localPlace.x));
-
                     }
                 }
             }

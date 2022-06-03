@@ -27,10 +27,11 @@ public class EnnemieBehaviour : MonoBehaviour
     public int direction = 0;
     public bool isMoving = false;
     public float waittime;
-
+    public bool animeAstar;
     List<GameObject> pathobject = new List<GameObject>();
     private void Awake()
     {
+       
         currentLife = life;
         point = transform.GetChild(0).gameObject;
         body = transform.GetChild(1).gameObject;
@@ -96,6 +97,21 @@ public class EnnemieBehaviour : MonoBehaviour
         {
             isMoving = true;
         }
+        if (PlayerMovement.Turn>0)
+        {
+            var vect = VectorHelper.vectorInt(point.transform.position);
+            for (int i = 0; i < Map.currentRoom.map[vect].attacks.Count; i++)
+            {
+                if (Map.currentRoom.map[vect].attacks[i].whom == 0)
+                {
+                    var attack = Map.currentRoom.map[vect].attacks[i];
+
+                    SetDammages(attack.initialPosition, attack.weapon.Dammage.x);
+
+
+                }
+            }
+        }
         //die
         if (currentLife < 0)
         {
@@ -110,7 +126,7 @@ public class EnnemieBehaviour : MonoBehaviour
     }
 
     //set the damges
-    public void SetDammages(Vector2 recule, float damage)
+    IEnumerator SetDammages(Vector2 recule, float damage)
     {
         healthbar.SetActive(true);
         currentLife -= damage;
@@ -139,55 +155,42 @@ public class EnnemieBehaviour : MonoBehaviour
     //return a Cheap as fock Path Finding
     public IEnumerator move()
     {
-        
+        var path = AStarPathFinder.GeneratePath(Map.currentRoom.AstarMapVector2Int(), VectorHelper.vector2Int(point.transform.position), VectorHelper.vector2Int(PlayerMovement.points.transform.position));
+        path.Reverse();
         for (int moveIdx = 0; moveIdx < ennemie.moves; moveIdx++)
         {
             yield return new WaitForSeconds(waittime);
 
             if (wait == false)
             {
-                var vect = VectorHelper.vectorInt(point.transform.position);
-                var hit = false;
-                for (int i = 0; i < Map.currentRoom.map[vect].attacks.Count; i++)
-                {
-                    if (Map.currentRoom.map[vect].attacks[i].whom == 0)
-                    {
-                        var attack = Map.currentRoom.map[vect].attacks[i];
-
-                        SetDammages(attack.initialPosition, attack.weapon.Dammage.x);
-                        hit = true;
-
-                    }
-                }
-
+               
                 //if (closest != vect)
                 //{
                 //var past = pasta.Bestpasta(closest, body.transform.position);
                 //TO DO : var past = astart(PlayerMovement.points.transform.position, body.transform.position);
-                if (!hit)
-                {
+               
                     if (!isMoving)
                     {
-                        var path = AStarPathFinder.GeneratePath(Map.currentRoom.AstarMapVector2Int(), VectorHelper.vector2Int(point.transform.position), VectorHelper.vector2Int(PlayerMovement.points.transform.position));
-                        path.Reverse();
+                        //try to move, if he cant he shoot;
+                        try
+                        {
+                           
 
-                        Map.currentRoom.map[VectorHelper.vectorInt(point.transform.position)].block = false;
-                        
-                        point.transform.position = VectorHelper.vector2Int2vect3(path[moveIdx].Position);
-
-                        Map.currentRoom.map[VectorHelper.vectorInt(point.transform.position)].block = true;
-                        
-                        DebugAStar(path);
-
-                    }
-                    else
-                    {
-                        print("shoot");
-                        //arm.setAttack(direction);
-                        //get the CheapPathFinding and if nothing blocks it it go there, if the player block it it will dammage him
-
-
-                    }
+                            Map.currentRoom.map[VectorHelper.vectorInt(point.transform.position)].block = false;
+                            point.transform.position = VectorHelper.vector2Int2vect3(path[moveIdx].Position);
+                            Map.currentRoom.map[VectorHelper.vectorInt(point.transform.position)].block = true;
+                            if (animeAstar)
+                            {
+                                DebugAStar(path);
+                            }
+                           
+                        }
+                        catch
+                        {
+                            arm.setAttack(direction);
+                        }
+                     
+                    
 
                 }
 
@@ -209,7 +212,6 @@ public class EnnemieBehaviour : MonoBehaviour
         {
             Destroy(pathobject[i]);
         }
-
         pathobject.Clear();
         for (int i = 0; i < path.Count; i++)
         {
